@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "craftheraldry:block/heraldry_banner", "y": 0 },
+    "facing=east":  { "model": "craftheraldry:block/heraldry_banner", "y": 90 },
+    "facing=south": { "model": "craftheraldry:block/heraldry_banner", "y": 180 },
+    "facing=west":  { "model": "craftheraldry:block/heraldry_banner", "y": 270 }
+  }
+}
