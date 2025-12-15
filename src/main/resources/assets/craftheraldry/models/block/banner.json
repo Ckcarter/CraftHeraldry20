@@ -2,30 +2,73 @@
   "parent": "minecraft:block/block",
   "textures": {
     "pole": "minecraft:block/oak_log",
-    "cloth": "craftheraldry:entity/banner_cloth",
     "particle": "minecraft:block/oak_log"
   },
   "elements": [
     {
       "name": "pole",
-      "from": [7, 0, 7],
-      "to":   [9, 16, 9],
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        48,
+        9
+      ],
       "faces": {
-        "north": { "texture": "#pole" },
-        "south": { "texture": "#pole" },
-        "east":  { "texture": "#pole" },
-        "west":  { "texture": "#pole" },
-        "up":    { "texture": "#pole" },
-        "down":  { "texture": "#pole" }
+        "north": {
+          "texture": "#pole"
+        },
+        "south": {
+          "texture": "#pole"
+        },
+        "east": {
+          "texture": "#pole"
+        },
+        "west": {
+          "texture": "#pole"
+        },
+        "up": {
+          "texture": "#pole"
+        },
+        "down": {
+          "texture": "#pole"
+        }
       }
     },
     {
-      "name": "cloth",
-      "from": [1, 2, 7.5],
-      "to":   [15, 14, 8.5],
+      "name": "crossbar",
+      "from": [
+        2,
+        39,
+        7
+      ],
+      "to": [
+        14,
+        41,
+        9
+      ],
       "faces": {
-        "north": { "texture": "#cloth" },
-        "south": { "texture": "#cloth" }
+        "north": {
+          "texture": "#pole"
+        },
+        "south": {
+          "texture": "#pole"
+        },
+        "east": {
+          "texture": "#pole"
+        },
+        "west": {
+          "texture": "#pole"
+        },
+        "up": {
+          "texture": "#pole"
+        },
+        "down": {
+          "texture": "#pole"
+        }
       }
     }
   ]
