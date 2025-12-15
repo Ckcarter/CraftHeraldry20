@@ -37,7 +37,7 @@ public class BannerBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final VoxelShape SHAPE_NORTH = Shapes.or(
-            // vertical pole (taller)
+            // vertical pole (tall)
             Block.box(7, 0, 7, 9, 48, 9),
             // top crossbar (left-to-right) above the cloth
             Block.box(2, 39, 7, 14, 41, 9),
