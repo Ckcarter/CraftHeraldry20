@@ -47,7 +47,7 @@ public class BannerBlock extends Block implements EntityBlock {
     private static final VoxelShape UPPER_NORTH = Shapes.or(
             Block.box(7, 0, 7, 9, 16, 9),           // upper pole segment
             Block.box(2, 14, 7, 14, 16, 9),         // crossbar
-            Block.box(2, 3, 6.5, 14, 16, 7.5)       // cloth (this half)
+            Block.box(1, 3, 6.5, 15, 16, 7.5)       // cloth (this half)
     );
 
     private static final Map<Direction, VoxelShape> LOWER_SHAPES = makeShapes(LOWER_NORTH);

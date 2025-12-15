@@ -48,8 +48,8 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         ps.mulPose(Axis.YP.rotationDegrees(rotY));
         ps.translate(-0.5, -0.5, -0.5);
 
-        float x0 = 2f / 16f, x1 = 14f / 16f;
-        float y0 = 19f / 16f, y1 = 31f / 16f;
+        float x0 = 1f / 16f, x1 = 15f / 16f;
+        float y0 = 11f / 16f, y1 = 31f / 16f;
         float z  = 6.5f / 16f;
 
         CrestData crest = be.getCrest();
