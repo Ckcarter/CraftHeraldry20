@@ -13,6 +13,10 @@ public class ModBlockEntities {
 
     public static final RegistryObject<BlockEntityType<BannerBlockEntity>> BANNER =
         BLOCK_ENTITIES.register("banner",
-            () -> BlockEntityType.Builder.of(BannerBlockEntity::new, ModBlocks.BANNER.get()).build(null)
+            () -> BlockEntityType.Builder.of(
+                    BannerBlockEntity::new,
+                    ModBlocks.BANNER.get(),
+                    ModBlocks.WALL_BANNER.get()
+            ).build(null)
         );
 }

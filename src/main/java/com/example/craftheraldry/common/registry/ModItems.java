@@ -2,8 +2,9 @@ package com.example.craftheraldry.common.registry;
 
 import com.example.craftheraldry.CraftHeraldry;
 import com.example.craftheraldry.common.item.ScrollItem;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.StandingAndWallBlockItem;
+import net.minecraft.core.Direction;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -13,7 +14,12 @@ public class ModItems {
         DeferredRegister.create(ForgeRegistries.ITEMS, CraftHeraldry.MODID);
 
     public static final RegistryObject<Item> BANNER =
-        ITEMS.register("banner", () -> new BlockItem(ModBlocks.BANNER.get(), new Item.Properties()));
+        ITEMS.register("banner", () -> new StandingAndWallBlockItem(
+            ModBlocks.BANNER.get(),
+            ModBlocks.WALL_BANNER.get(),
+            new Item.Properties(),
+            Direction.DOWN
+        ));
 
     public static final RegistryObject<Item> SCROLL =
         ITEMS.register("scroll", () -> new ScrollItem(new Item.Properties().stacksTo(1)));

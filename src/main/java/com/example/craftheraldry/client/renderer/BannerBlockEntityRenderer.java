@@ -2,6 +2,7 @@ package com.example.craftheraldry.client.renderer;
 
 import com.example.craftheraldry.CraftHeraldry;
 import com.example.craftheraldry.common.block.BannerBlock;
+import com.example.craftheraldry.common.block.WallBannerBlock;
 import com.example.craftheraldry.common.blockentity.BannerBlockEntity;
 import com.example.craftheraldry.common.util.CrestData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -37,6 +38,8 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         Direction facing = state.hasProperty(BannerBlock.FACING)
                 ? state.getValue(BannerBlock.FACING)
                 : Direction.NORTH;
+        boolean isWall = state.getBlock() instanceof WallBannerBlock;
+
 
         ps.translate(0.5, 0.5, 0.5);
         float rotY = switch (facing) {
@@ -49,8 +52,14 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         ps.translate(-0.5, -0.5, -0.5);
 
         float x0 = 1f / 16f, x1 = 15f / 16f;
-        float y0 = 11f / 16f, y1 = 31f / 16f;
-        float z  = 6.5f / 16f;
+
+// Standing banner: cloth hangs from crossbar.
+// Wall banner: tapestry-style, flush to the wall and spans 2 blocks tall.
+float y0 = isWall ? 0f : 11f / 16f;
+float y1 = isWall ? 32f / 16f : 31f / 16f;
+
+// Local Z (before rotation): NORTH face is at z=16/16.
+float z  = isWall ? (15.85f / 16f) : (6.5f / 16f);
 
         CrestData crest = be.getCrest();
 

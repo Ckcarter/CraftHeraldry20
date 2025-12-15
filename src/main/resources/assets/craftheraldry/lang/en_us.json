@@ -1,6 +1,7 @@
 {
   "item.craftheraldry.scroll": "Heraldry Scroll",
   "block.craftheraldry.banner": "Heraldry Banner",
+  "block.craftheraldry.wall_banner": "Heraldry Wall Banner",
   "message.craftheraldry.locked": "Banner Locked.",
   "message.craftheraldry.unlocked": "Banner Unlocked.",
   "message.craftheraldry.banner_is_locked": "This banner is locked. Sneak + Right-click with empty hand to unlock.",
