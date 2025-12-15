@@ -66,4 +66,9 @@ public class BannerBlockEntity extends BlockEntity {
             locked = tag.getBoolean("locked");
         }
     }
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        return new net.minecraft.world.phys.AABB(getBlockPos(), getBlockPos().offset(1, 2, 1));
+    }
+
 }

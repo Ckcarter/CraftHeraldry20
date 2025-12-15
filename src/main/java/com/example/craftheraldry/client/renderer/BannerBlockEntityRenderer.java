@@ -43,7 +43,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         ps.translate(-0.5, -0.5, -0.5);
 
         float x0 = 2f/16f, x1 = 14f/16f;
-            float y0 = 19f/16f, y1 = 39f/16f;
+            float y0 = 19f/16f, y1 = 31f/16f;
             float z = 6.5f/16f;
 
         int icon = crest.icon();

@@ -1,8 +1,36 @@
 {
   "variants": {
-    "facing=north": { "model": "craftheraldry:block/banner", "y": 0 },
-    "facing=east":  { "model": "craftheraldry:block/banner", "y": 90 },
-    "facing=south": { "model": "craftheraldry:block/banner", "y": 180 },
-    "facing=west":  { "model": "craftheraldry:block/banner", "y": 270 }
+    "facing=north,half=lower": {
+      "model": "craftheraldry:block/banner_lower",
+      "y": 0
+    },
+    "facing=east,half=lower": {
+      "model": "craftheraldry:block/banner_lower",
+      "y": 90
+    },
+    "facing=south,half=lower": {
+      "model": "craftheraldry:block/banner_lower",
+      "y": 180
+    },
+    "facing=west,half=lower": {
+      "model": "craftheraldry:block/banner_lower",
+      "y": 270
+    },
+    "facing=north,half=upper": {
+      "model": "craftheraldry:block/banner_upper",
+      "y": 0
+    },
+    "facing=east,half=upper": {
+      "model": "craftheraldry:block/banner_upper",
+      "y": 90
+    },
+    "facing=south,half=upper": {
+      "model": "craftheraldry:block/banner_upper",
+      "y": 180
+    },
+    "facing=west,half=upper": {
+      "model": "craftheraldry:block/banner_upper",
+      "y": 270
+    }
   }
 }
