@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "pattern": [" P ", "PPP", " S "],
-  "key": {
-    "P": { "item": "minecraft:paper" },
-    "S": { "item": "minecraft:stick" }
-  },
-  "result": { "item": "craftheraldry:heraldry_scroll" }
-}

@@ -1,5 +1,11 @@
 {
-  "item.craftheraldry.heraldry_scroll": "Heraldry Scroll",
-  "block.craftheraldry.heraldry_banner": "Heraldry Banner",
-  "item.craftheraldry.heraldry_banner": "Heraldry Banner"
+  "item.craftheraldry.scroll": "Heraldry Scroll",
+  "block.craftheraldry.banner": "Heraldry Banner",
+  "message.craftheraldry.locked": "Banner Locked.",
+  "message.craftheraldry.unlocked": "Banner Unlocked.",
+  "message.craftheraldry.banner_is_locked": "This banner is locked. Sneak + Right-click with empty hand to unlock.",
+  "screen.craftheraldry.crest_editor": "Crest Editor",
+  "screen.craftheraldry.save": "Save",
+  "screen.craftheraldry.random": "Random",
+  "screen.craftheraldry.page": "Page"
 }
