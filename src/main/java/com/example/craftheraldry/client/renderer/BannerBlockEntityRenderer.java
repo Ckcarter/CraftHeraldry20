@@ -17,20 +17,26 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBlockEntity> {
 
-    private static final ResourceLocation SHEET0 = new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_0.png");
-    private static final ResourceLocation SHEET1 = new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_1.png");
+    private static final ResourceLocation CLOTH_BASE =
+        new ResourceLocation("craftheraldry", "textures/entity/banner_cloth.png");
+
+    private static final ResourceLocation SHEET0 =
+        new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_0.png");
+    private static final ResourceLocation SHEET1 =
+        new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_1.png");
 
     public BannerBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {}
 
     @Override
-    public void render(BannerBlockEntity be, float partialTicks, PoseStack ps, MultiBufferSource buf, int light, int overlay) {
-        CrestData crest = be.getCrest();
-        if (crest == null || crest.icon() < 0) return;
+    public void render(BannerBlockEntity be, float partialTicks, PoseStack ps,
+                       MultiBufferSource buf, int light, int overlay) {
 
         ps.pushPose();
 
         BlockState state = be.getBlockState();
-        Direction facing = state.hasProperty(BannerBlock.FACING) ? state.getValue(BannerBlock.FACING) : Direction.NORTH;
+        Direction facing = state.hasProperty(BannerBlock.FACING)
+                ? state.getValue(BannerBlock.FACING)
+                : Direction.NORTH;
 
         ps.translate(0.5, 0.5, 0.5);
         float rotY = switch (facing) {
@@ -42,10 +48,24 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         ps.mulPose(Axis.YP.rotationDegrees(rotY));
         ps.translate(-0.5, -0.5, -0.5);
 
-        float x0 = 2f/16f, x1 = 14f/16f;
-            float y0 = 19f/16f, y1 = 31f/16f;
-            float z = 6.5f/16f;
+        float x0 = 2f / 16f, x1 = 14f / 16f;
+        float y0 = 19f / 16f, y1 = 31f / 16f;
+        float z  = 6.5f / 16f;
 
+        CrestData crest = be.getCrest();
+
+        // If NO crest is set yet: show the plain white cloth.
+        if (crest == null || crest.icon() < 0) {
+            VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
+            // front
+            putQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+            // back (swap x to flip winding)
+            putQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
+            ps.popPose();
+            return;
+        }
+
+        // Crest is set: hide the base cloth and render only the crest layers.
         int icon = crest.icon();
         int col = icon % 32;
         int row = icon / 32;
@@ -55,18 +75,19 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float v1 = ((row + 1) * 64f) / 4096f;
 
         VertexConsumer vc0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
-        putQuad(ps, vc0, x0, y0, x1, y1, z, u1, v0, u0, v1, crest.color1(), light);
+        putQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
 
         VertexConsumer vc1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
-        putQuad(ps, vc1, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color2(), light);
+        putQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
 
-            // back side (so you can see the crest from behind)
-            // draw slightly behind, and flip normal by swapping vertex winding via swapped x0/x1
-            VertexConsumer back0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
-            putQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
-            VertexConsumer back1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
-            putQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
-ps.popPose();
+        // back side (see crest from behind)
+        VertexConsumer back0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
+        putQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+
+        VertexConsumer back1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
+        putQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+
+        ps.popPose();
     }
 
     private static void putQuad(PoseStack ps, VertexConsumer vc,
@@ -82,7 +103,6 @@ ps.popPose();
         var normal = ps.last().normal();
         int overlay = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 
-        // Counter-clockwise on north-facing quad
         vc.vertex(pose, x0, y1, z).color(r, g, b, 1f).uv(u0, v0).overlayCoords(overlay).uv2(light).normal(normal, 0, 0, -1).endVertex();
         vc.vertex(pose, x1, y1, z).color(r, g, b, 1f).uv(u1, v0).overlayCoords(overlay).uv2(light).normal(normal, 0, 0, -1).endVertex();
         vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v1).overlayCoords(overlay).uv2(light).normal(normal, 0, 0, -1).endVertex();
