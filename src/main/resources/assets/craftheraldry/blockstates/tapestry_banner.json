@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,half=lower": {
+      "model": "craftheraldry:block/tapestry_banner_lower"
+    },
+    "facing=east,half=lower": {
+      "model": "craftheraldry:block/tapestry_banner_lower",
+      "y": 90
+    },
+    "facing=south,half=lower": {
+      "model": "craftheraldry:block/tapestry_banner_lower",
+      "y": 180
+    },
+    "facing=west,half=lower": {
+      "model": "craftheraldry:block/tapestry_banner_lower",
+      "y": 270
+    },
+    "facing=north,half=upper": {
+      "model": "craftheraldry:block/tapestry_banner_upper"
+    },
+    "facing=east,half=upper": {
+      "model": "craftheraldry:block/tapestry_banner_upper",
+      "y": 90
+    },
+    "facing=south,half=upper": {
+      "model": "craftheraldry:block/tapestry_banner_upper",
+      "y": 180
+    },
+    "facing=west,half=upper": {
+      "model": "craftheraldry:block/tapestry_banner_upper",
+      "y": 270
+    }
+  }
+}

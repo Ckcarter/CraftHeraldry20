@@ -37,7 +37,12 @@ public class ScrollItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (level.isClientSide) openEditor(stack);
+
+        // Scroll ONLY opens the crest editor
+        if (level.isClientSide) {
+            openEditor(stack);
+        }
+
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 

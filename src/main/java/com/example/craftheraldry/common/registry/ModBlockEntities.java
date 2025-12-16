@@ -16,6 +16,8 @@ public class ModBlockEntities {
             () -> BlockEntityType.Builder.of(
                     BannerBlockEntity::new,
                     ModBlocks.BANNER.get(),
-                    ModBlocks.WALL_BANNER.get()).build(null)
+                    ModBlocks.WALL_BANNER.get()
+
+                    ).build(null)
         );
 }

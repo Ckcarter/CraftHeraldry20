@@ -21,6 +21,8 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
     private static final ResourceLocation CLOTH_BASE =
         new ResourceLocation("craftheraldry", "textures/entity/banner_cloth.png");
 
+    private static final ResourceLocation WOOD_ROD_TEXTURE = new ResourceLocation("minecraft", "textures/block/oak_log.png");
+    private static final ResourceLocation WOOD_ROD_CAP_TEXTURE = new ResourceLocation("minecraft", "textures/block/oak_log_top.png");
     private static final ResourceLocation SHEET0 =
         new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_0.png");
     private static final ResourceLocation SHEET1 =
@@ -39,7 +41,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
                 ? state.getValue(BannerBlock.FACING)
                 : Direction.NORTH;
         boolean isWallBanner = state.getBlock() instanceof WallBannerBlock;
-        ps.translate(0.5, 0.5, 0.5);
+        boolean hasCap = isWallBanner && state.hasProperty(WallBannerBlock.HAS_CAP) && state.getValue(WallBannerBlock.HAS_CAP);        ps.translate(0.5, 0.5, 0.5);
         float rotY = switch (facing) {
             case SOUTH -> 180f;
             case WEST -> 90f;
@@ -48,18 +50,177 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         };
         ps.mulPose(Axis.YP.rotationDegrees(rotY));
         ps.translate(-0.5, -0.5, -0.5);
+
+        if (isWallBanner) {
+            // Move 2-block-tall cloth + crest down one full block
+            ps.translate(0.0, -1.0, 0.0);
+        }
+
+
         float x0 = 1f / 16f, x1 = 15f / 16f;
 
 // Standing banner: cloth hangs from crossbar.
-// Wall banner: ONE block tall, flush to the wall.
+// Wall banner: TWO blocks tall (cloth hangs down), flush to the wall.
+// Tapestry: TWO blocks tall, flush to the wall.
 float y0 = isWallBanner ? 0f : 11f / 16f;
-float y1 = isWallBanner ? (16f / 16f) : (31f / 16f);
+float y1 = isWallBanner ? (32f / 16f) : (31f / 16f);
 
 // Local Z (before rotation): NORTH face is at z=16/16.
+
 float z  = isWallBanner ? (15.85f / 16f) : (6.5f / 16f);
+
+
+        
+// === Wall banner top rod (rendered here because the block uses RenderShape.INVISIBLE) ===
+if (isWallBanner) {
+    VertexConsumer rodSide = buf.getBuffer(RenderType.entitySolid(WOOD_ROD_TEXTURE));
+    VertexConsumer rodCap  = buf.getBuffer(RenderType.entitySolid(WOOD_ROD_CAP_TEXTURE));
+
+    var pose = ps.last().pose();
+    var normal = ps.last().normal();
+    int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
+
+    // Rod dimensions (in block units)
+    float rodThicknessY = 2f / 16f;
+    float rodDepthZ = 3f / 16f;     // protrusion towards the player
+
+    // Place rod at very top of the cloth
+    float ry0 = y1 - rodThicknessY;
+    float ry1 = y1;
+
+    // Protrude from the wall
+    float rz1 = z;          // near wall face
+    float rz0 = z - rodDepthZ;
+
+    // Make rod extend slightly past the cloth width
+    float rx0 = x0 - (1f / 16f);
+    float rx1 = x1 + (1f / 16f);
+
+    // Simple UVs (0..1).
+    float ru0 = 0f, ru1 = 1f;
+    float rv0 = 0f, rv1 = 1f;
+
+    // Front face
+    rodSide.vertex(pose, rx0, ry1, rz1).color(1f, 1f, 1f, 1f).uv(ru0, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+    rodSide.vertex(pose, rx1, ry1, rz1).color(1f, 1f, 1f, 1f).uv(ru1, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+    rodSide.vertex(pose, rx1, ry0, rz1).color(1f, 1f, 1f, 1f).uv(ru1, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+    rodSide.vertex(pose, rx0, ry0, rz1).color(1f, 1f, 1f, 1f).uv(ru0, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+
+    // Back face
+    rodSide.vertex(pose, rx1, ry1, rz0).color(1f, 1f, 1f, 1f).uv(ru0, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, 1).endVertex();
+    rodSide.vertex(pose, rx0, ry1, rz0).color(1f, 1f, 1f, 1f).uv(ru1, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, 1).endVertex();
+    rodSide.vertex(pose, rx0, ry0, rz0).color(1f, 1f, 1f, 1f).uv(ru1, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, 1).endVertex();
+    rodSide.vertex(pose, rx1, ry0, rz0).color(1f, 1f, 1f, 1f).uv(ru0, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, 1).endVertex();
+
+    // Top face
+    rodSide.vertex(pose, rx0, ry1, rz0).color(1f, 1f, 1f, 1f).uv(ru0, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, 1, 0).endVertex();
+    rodSide.vertex(pose, rx1, ry1, rz0).color(1f, 1f, 1f, 1f).uv(ru1, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, 1, 0).endVertex();
+    rodSide.vertex(pose, rx1, ry1, rz1).color(1f, 1f, 1f, 1f).uv(ru1, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, 1, 0).endVertex();
+    rodSide.vertex(pose, rx0, ry1, rz1).color(1f, 1f, 1f, 1f).uv(ru0, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, 1, 0).endVertex();
+
+    // Bottom face
+    rodSide.vertex(pose, rx0, ry0, rz1).color(1f, 1f, 1f, 1f).uv(ru0, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, -1, 0).endVertex();
+    rodSide.vertex(pose, rx1, ry0, rz1).color(1f, 1f, 1f, 1f).uv(ru1, rv0).overlayCoords(ov).uv2(light).normal(normal, 0, -1, 0).endVertex();
+    rodSide.vertex(pose, rx1, ry0, rz0).color(1f, 1f, 1f, 1f).uv(ru1, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, -1, 0).endVertex();
+    rodSide.vertex(pose, rx0, ry0, rz0).color(1f, 1f, 1f, 1f).uv(ru0, rv1).overlayCoords(ov).uv2(light).normal(normal, 0, -1, 0).endVertex();
+
+    // Left end cap (oak_log_top)
+    rodCap.vertex(pose, rx0, ry1, rz0).color(1f, 1f, 1f, 1f).uv(ru0, rv0).overlayCoords(ov).uv2(light).normal(normal, -1, 0, 0).endVertex();
+    rodCap.vertex(pose, rx0, ry1, rz1).color(1f, 1f, 1f, 1f).uv(ru1, rv0).overlayCoords(ov).uv2(light).normal(normal, -1, 0, 0).endVertex();
+    rodCap.vertex(pose, rx0, ry0, rz1).color(1f, 1f, 1f, 1f).uv(ru1, rv1).overlayCoords(ov).uv2(light).normal(normal, -1, 0, 0).endVertex();
+    rodCap.vertex(pose, rx0, ry0, rz0).color(1f, 1f, 1f, 1f).uv(ru0, rv1).overlayCoords(ov).uv2(light).normal(normal, -1, 0, 0).endVertex();
+
+    // Right end cap (oak_log_top)
+    rodCap.vertex(pose, rx1, ry1, rz1).color(1f, 1f, 1f, 1f).uv(ru0, rv0).overlayCoords(ov).uv2(light).normal(normal, 1, 0, 0).endVertex();
+    rodCap.vertex(pose, rx1, ry1, rz0).color(1f, 1f, 1f, 1f).uv(ru1, rv0).overlayCoords(ov).uv2(light).normal(normal, 1, 0, 0).endVertex();
+    rodCap.vertex(pose, rx1, ry0, rz0).color(1f, 1f, 1f, 1f).uv(ru1, rv1).overlayCoords(ov).uv2(light).normal(normal, 1, 0, 0).endVertex();
+    rodCap.vertex(pose, rx1, ry0, rz1).color(1f, 1f, 1f, 1f).uv(ru0, rv1).overlayCoords(ov).uv2(light).normal(normal, 1, 0, 0).endVertex();
+
+    // Optional decorative finials (caps) on the rod ends
+    if (hasCap) {
+        float f = 2f / 16f;      // finial size
+        float protrude = 1f / 16f;
+
+        float fx0L = rx0 - f;
+        float fx1L = rx0;
+        float fx0R = rx1;
+        float fx1R = rx1 + f;
+
+        float fy0 = ry0;
+        float fy1 = ry1;
+
+        float fz0 = rz0 - protrude;
+        float fz1 = rz1;
+
+        // Left finial cube
+        // Front
+        rodCap.vertex(pose, fx0L, fy1, fz1).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        rodCap.vertex(pose, fx1L, fy1, fz1).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        rodCap.vertex(pose, fx1L, fy0, fz1).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        rodCap.vertex(pose, fx0L, fy0, fz1).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        // Back
+        rodCap.vertex(pose, fx1L, fy1, fz0).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        rodCap.vertex(pose, fx0L, fy1, fz0).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        rodCap.vertex(pose, fx0L, fy0, fz0).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        rodCap.vertex(pose, fx1L, fy0, fz0).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        // Left face
+        rodCap.vertex(pose, fx0L, fy1, fz0).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        rodCap.vertex(pose, fx0L, fy1, fz1).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        rodCap.vertex(pose, fx0L, fy0, fz1).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        rodCap.vertex(pose, fx0L, fy0, fz0).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        // Right face
+        rodCap.vertex(pose, fx1L, fy1, fz1).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy1, fz0).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy0, fz0).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy0, fz1).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        // Top
+        rodCap.vertex(pose, fx0L, fy1, fz0).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy1, fz0).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy1, fz1).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        rodCap.vertex(pose, fx0L, fy1, fz1).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        // Bottom
+        rodCap.vertex(pose, fx0L, fy0, fz1).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy0, fz1).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        rodCap.vertex(pose, fx1L, fy0, fz0).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        rodCap.vertex(pose, fx0L, fy0, fz0).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+
+        // Right finial cube
+        // Front
+        rodCap.vertex(pose, fx0R, fy1, fz1).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        rodCap.vertex(pose, fx1R, fy1, fz1).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        rodCap.vertex(pose, fx1R, fy0, fz1).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        rodCap.vertex(pose, fx0R, fy0, fz1).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+        // Back
+        rodCap.vertex(pose, fx1R, fy1, fz0).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        rodCap.vertex(pose, fx0R, fy1, fz0).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        rodCap.vertex(pose, fx0R, fy0, fz0).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        rodCap.vertex(pose, fx1R, fy0, fz0).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
+        // Left face
+        rodCap.vertex(pose, fx0R, fy1, fz0).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        rodCap.vertex(pose, fx0R, fy1, fz1).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        rodCap.vertex(pose, fx0R, fy0, fz1).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        rodCap.vertex(pose, fx0R, fy0, fz0).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        // Right face
+        rodCap.vertex(pose, fx1R, fy1, fz1).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy1, fz0).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy0, fz0).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy0, fz1).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        // Top
+        rodCap.vertex(pose, fx0R, fy1, fz0).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy1, fz0).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy1, fz1).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        rodCap.vertex(pose, fx0R, fy1, fz1).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        // Bottom
+        rodCap.vertex(pose, fx0R, fy0, fz1).color(1f,1f,1f,1f).uv(0f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy0, fz1).color(1f,1f,1f,1f).uv(1f,0f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        rodCap.vertex(pose, fx1R, fy0, fz0).color(1f,1f,1f,1f).uv(1f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        rodCap.vertex(pose, fx0R, fy0, fz0).color(1f,1f,1f,1f).uv(0f,1f).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+    }
+}
+
 CrestData crest = be.getCrest();
 
-        // If NO crest is set yet: show the plain white cloth.
+// If NO crest is set yet: show the plain white cloth.
         if (crest == null || crest.icon() < 0) {
             VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
             // front
