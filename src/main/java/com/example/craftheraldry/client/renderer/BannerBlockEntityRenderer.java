@@ -3,7 +3,6 @@ package com.example.craftheraldry.client.renderer;
 import com.example.craftheraldry.CraftHeraldry;
 import com.example.craftheraldry.common.block.BannerBlock;
 import com.example.craftheraldry.common.block.WallBannerBlock;
-import com.example.craftheraldry.common.block.TapestryBannerBlock;
 import com.example.craftheraldry.common.blockentity.BannerBlockEntity;
 import com.example.craftheraldry.common.util.CrestData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -40,9 +39,6 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
                 ? state.getValue(BannerBlock.FACING)
                 : Direction.NORTH;
         boolean isWallBanner = state.getBlock() instanceof WallBannerBlock;
-        boolean isTapestry = state.getBlock() instanceof TapestryBannerBlock;
-
-
         ps.translate(0.5, 0.5, 0.5);
         float rotY = switch (facing) {
             case SOUTH -> 180f;
@@ -52,23 +48,15 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         };
         ps.mulPose(Axis.YP.rotationDegrees(rotY));
         ps.translate(-0.5, -0.5, -0.5);
-
-        if (isTapestry) {
-            // Move tapestry cloth + crest down one full block
-            ps.translate(0.0, -1.0, 0.0);
-        }
-
-
         float x0 = 1f / 16f, x1 = 15f / 16f;
 
 // Standing banner: cloth hangs from crossbar.
 // Wall banner: ONE block tall, flush to the wall.
-// Tapestry: TWO blocks tall, flush to the wall.
-float y0 = (isWallBanner || isTapestry) ? 0f : 11f / 16f;
-float y1 = isTapestry ? (32f / 16f) : (isWallBanner ? (16f / 16f) : (31f / 16f));
+float y0 = isWallBanner ? 0f : 11f / 16f;
+float y1 = isWallBanner ? (16f / 16f) : (31f / 16f);
 
 // Local Z (before rotation): NORTH face is at z=16/16.
-float z  = (isWallBanner || isTapestry) ? (15.85f / 16f) : (6.5f / 16f);
+float z  = isWallBanner ? (15.85f / 16f) : (6.5f / 16f);
 CrestData crest = be.getCrest();
 
         // If NO crest is set yet: show the plain white cloth.

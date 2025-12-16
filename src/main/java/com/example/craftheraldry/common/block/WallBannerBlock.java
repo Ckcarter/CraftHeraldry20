@@ -28,18 +28,14 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * One-block wall-mounted banner (vanilla wall-banner style).
- *
- * - Places as ONE block (no DoubleBlockHalf).
- * - Stores crest data in BannerBlockEntity at its own position.
- * - Right-click with a ScrollItem applies the crest (same behavior as BannerBlock).
- * - Shift + empty hand toggles lock (same behavior as BannerBlock).
- */
 public class WallBannerBlock extends Block implements EntityBlock {
 
-    // Reuse the SAME property instance as the standing banner for renderer compatibility.
     public static final DirectionProperty FACING = BannerBlock.FACING;
+
+    private static final VoxelShape NORTH = Block.box(1, 0, 14, 15, 16, 16);
+    private static final VoxelShape SOUTH = Block.box(1, 0, 0, 15, 16, 2);
+    private static final VoxelShape WEST  = Block.box(14, 0, 1, 16, 16, 15);
+    private static final VoxelShape EAST  = Block.box(0, 0, 1, 2, 16, 15);
 
     public WallBannerBlock(Properties props) {
         super(props);
@@ -47,8 +43,8 @@ public class WallBannerBlock extends Block implements EntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> b) {
+        b.add(FACING);
     }
 
     @Override
@@ -60,42 +56,42 @@ public class WallBannerBlock extends Block implements EntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         Direction face = ctx.getClickedFace();
-        if (!face.getAxis().isHorizontal()) return null; // must be placed on a wall
-        // Face is the direction of the wall face you clicked; the banner should face outward.
-        return this.defaultBlockState().setValue(FACING, face);
+        if (!face.getAxis().isHorizontal()) return null;
+        return defaultBlockState().setValue(FACING, face);
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction facing = state.getValue(FACING);
-        BlockPos supportPos = pos.relative(facing.getOpposite());
-        return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, facing);
+        BlockPos support = pos.relative(facing.getOpposite());
+        return level.getBlockState(support).isFaceSturdy(level, support, facing);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (level.isClientSide) return;
-        if (!state.canSurvive(level, pos)) {
-            level.destroyBlock(pos, false);
-        }
+        if (!state.canSurvive(level, pos)) level.destroyBlock(pos, true);
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        // Thin wall-hanging collision/outline (2px thick)
-        Direction f = state.getValue(FACING);
-        return switch (f) {
-            case NORTH -> Block.box(1, 0, 14, 15, 16, 16);
-            case SOUTH -> Block.box(1, 0, 0, 15, 16, 2);
-            case WEST -> Block.box(14, 0, 1, 16, 16, 15);
-            case EAST -> Block.box(0, 0, 1, 2, 16, 15);
-            default -> Shapes.block();
+        return switch (state.getValue(FACING)) {
+            case NORTH -> NORTH;
+            case SOUTH -> SOUTH;
+            case WEST  -> WEST;
+            case EAST  -> EAST;
+            default -> NORTH;
         };
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return getShape(state, level, pos, ctx);
+        return Shapes.empty();
+    }
+
+    @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return getShape(state, level, pos, CollisionContext.empty());
     }
 
     @Override
@@ -112,13 +108,9 @@ public class WallBannerBlock extends Block implements EntityBlock {
         ItemStack held = player.getItemInHand(hand);
         boolean holdingScroll = held.getItem() instanceof ScrollItem;
 
-        // Match BannerBlock: only handle scroll apply, or shift+empty lock toggle.
-        if (!holdingScroll && !(player.isShiftKeyDown() && held.isEmpty())) {
-            return InteractionResult.PASS;
-        }
+        if (!holdingScroll && !(player.isShiftKeyDown() && held.isEmpty())) return InteractionResult.PASS;
 
         if (!level.isClientSide) {
-            // Shift + empty hand toggles lock
             if (player.isShiftKeyDown() && held.isEmpty()) {
                 be.setLocked(!be.isLocked());
                 player.displayClientMessage(
@@ -132,7 +124,6 @@ public class WallBannerBlock extends Block implements EntityBlock {
                 return InteractionResult.CONSUME;
             }
 
-            // Apply crest from scroll
             if (holdingScroll) {
                 if (be.isLocked()) {
                     player.displayClientMessage(Component.translatable("message.craftheraldry.banner_is_locked"), true);
