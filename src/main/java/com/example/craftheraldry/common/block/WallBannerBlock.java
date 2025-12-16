@@ -21,6 +21,14 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import com.example.craftheraldry.common.item.ScrollItem;
+import com.example.craftheraldry.common.util.CrestData;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Wall-mounted variant of the banner.
@@ -143,4 +151,43 @@ public class WallBannerBlock extends Block implements EntityBlock {
         // Only store data on LOWER half
         return state.getValue(HALF) == DoubleBlockHalf.LOWER ? new BannerBlockEntity(pos, state) : null;
     }
+@Override
+public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    // If clicked upper, redirect to lower
+    if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+        pos = pos.below();
+        state = level.getBlockState(pos);
+    }
+
+    if (!(level.getBlockEntity(pos) instanceof BannerBlockEntity be)) return InteractionResult.PASS;
+
+    ItemStack held = player.getItemInHand(hand);
+    boolean holdingScroll = held.getItem() instanceof ScrollItem;
+
+    if (!level.isClientSide) {
+        if (player.isShiftKeyDown() && held.isEmpty()) {
+            be.setLocked(!be.isLocked());
+            player.displayClientMessage(Component.translatable(be.isLocked()
+                    ? "message.craftheraldry.locked"
+                    : "message.craftheraldry.unlocked"), true);
+            be.setChanged();
+            ((ServerLevel) level).sendBlockUpdated(pos, state, state, 3);
+            return InteractionResult.CONSUME;
+        }
+
+        if (holdingScroll) {
+            if (be.isLocked()) {
+                player.displayClientMessage(Component.translatable("message.craftheraldry.banner_is_locked"), true);
+                return InteractionResult.CONSUME;
+            }
+            CrestData crest = ScrollItem.getCrest(held);
+            be.setCrest(crest);
+            be.setChanged();
+            ((ServerLevel) level).sendBlockUpdated(pos, state, state, 3);
+            return InteractionResult.CONSUME;
+        }
+    }
+
+    return InteractionResult.sidedSuccess(level.isClientSide);
+}
 }
