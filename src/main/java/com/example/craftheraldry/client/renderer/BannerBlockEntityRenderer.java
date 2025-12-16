@@ -3,6 +3,7 @@ package com.example.craftheraldry.client.renderer;
 import com.example.craftheraldry.CraftHeraldry;
 import com.example.craftheraldry.common.block.BannerBlock;
 import com.example.craftheraldry.common.block.WallBannerBlock;
+import com.example.craftheraldry.common.block.TapestryBannerBlock;
 import com.example.craftheraldry.common.blockentity.BannerBlockEntity;
 import com.example.craftheraldry.common.util.CrestData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,7 +39,8 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         Direction facing = state.hasProperty(BannerBlock.FACING)
                 ? state.getValue(BannerBlock.FACING)
                 : Direction.NORTH;
-        boolean isWall = state.getBlock() instanceof WallBannerBlock;
+        boolean isWall = state.getBlock() instanceof WallBannerBlock || state.getBlock() instanceof TapestryBannerBlock;
+        boolean isTapestry = state.getBlock() instanceof TapestryBannerBlock;
 
 
         ps.translate(0.5, 0.5, 0.5);
@@ -50,6 +52,12 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         };
         ps.mulPose(Axis.YP.rotationDegrees(rotY));
         ps.translate(-0.5, -0.5, -0.5);
+
+        if (isTapestry) {
+            // Move tapestry cloth + crest down one full block
+            ps.translate(0.0, -1.0, 0.0);
+        }
+
 
         float x0 = 1f / 16f, x1 = 15f / 16f;
 

@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,41 @@ public class BannerBlockEntity extends BlockEntity {
 
     public boolean isLocked() { return locked; }
     public void setLocked(boolean locked) { this.locked = locked; }
+/**
+ * Save this banner's crest/lock state onto an itemstack so it can be placed elsewhere (tapestry, banner, etc).
+ */
+public void writeToItem(ItemStack stack) {
+    if (stack == null) return;
+    CompoundTag root = stack.getOrCreateTag();
+    root.put(CrestData.NBT_KEY, crest.toTag());
+    if (locked) root.putBoolean("Locked", true);
+    else root.remove("Locked");
+}
+
+/**
+ * Load crest/lock state from an itemstack onto this block entity.
+ * Accepts both the new key (Crest/Locked) and legacy keys (crest/locked).
+ */
+public void readFromItem(ItemStack stack) {
+    if (stack == null) return;
+    CompoundTag root = stack.getTag();
+    if (root == null) return;
+
+    if (root.contains(CrestData.NBT_KEY)) {
+        crest = CrestData.fromTag(root.getCompound(CrestData.NBT_KEY));
+    } else if (root.contains("crest")) {
+        crest = CrestData.fromTag(root.getCompound("crest"));
+    }
+
+    if (root.contains("Locked")) {
+        locked = root.getBoolean("Locked");
+    } else {
+        locked = root.getBoolean("locked");
+    }
+
+    setChanged();
+}
+
 
     @Override
     protected void saveAdditional(CompoundTag tag) {

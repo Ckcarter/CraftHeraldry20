@@ -4,6 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 
 public record CrestData(int color1, int color2, short icon) {
 
+    public static final String NBT_KEY = "Crest";
+
     public static final String TAG_COLOR1 = "color1";
     public static final String TAG_COLOR2 = "color2";
     public static final String TAG_ICON = "icon";

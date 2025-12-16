@@ -2,7 +2,9 @@ package com.example.craftheraldry.common.registry;
 
 import com.example.craftheraldry.CraftHeraldry;
 import com.example.craftheraldry.common.item.ScrollItem;
+import com.example.craftheraldry.common.item.TapestryBannerItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.core.Direction;
 import net.minecraftforge.registries.DeferredRegister;
@@ -20,6 +22,13 @@ public class ModItems {
             new Item.Properties(),
             Direction.DOWN
         ));
+
+    
+public static final RegistryObject<Item> TAPESTRY_BANNER =
+    ITEMS.register("tapestry_banner", () -> new TapestryBannerItem(
+        ModBlocks.TAPESTRY_BANNER.get(),
+        new Item.Properties()
+    ));
 
     public static final RegistryObject<Item> SCROLL =
         ITEMS.register("scroll", () -> new ScrollItem(new Item.Properties().stacksTo(1)));
