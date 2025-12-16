@@ -39,7 +39,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         Direction facing = state.hasProperty(BannerBlock.FACING)
                 ? state.getValue(BannerBlock.FACING)
                 : Direction.NORTH;
-        boolean isWall = state.getBlock() instanceof WallBannerBlock || state.getBlock() instanceof TapestryBannerBlock;
+        boolean isWallBanner = state.getBlock() instanceof WallBannerBlock;
         boolean isTapestry = state.getBlock() instanceof TapestryBannerBlock;
 
 
@@ -62,14 +62,14 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float x0 = 1f / 16f, x1 = 15f / 16f;
 
 // Standing banner: cloth hangs from crossbar.
-// Wall banner: tapestry-style, flush to the wall and spans 2 blocks tall.
-float y0 = isWall ? 0f : 11f / 16f;
-float y1 = isWall ? 32f / 16f : 31f / 16f;
+// Wall banner: ONE block tall, flush to the wall.
+// Tapestry: TWO blocks tall, flush to the wall.
+float y0 = (isWallBanner || isTapestry) ? 0f : 11f / 16f;
+float y1 = isTapestry ? (32f / 16f) : (isWallBanner ? (16f / 16f) : (31f / 16f));
 
 // Local Z (before rotation): NORTH face is at z=16/16.
-float z  = isWall ? (15.85f / 16f) : (6.5f / 16f);
-
-        CrestData crest = be.getCrest();
+float z  = (isWallBanner || isTapestry) ? (15.85f / 16f) : (6.5f / 16f);
+CrestData crest = be.getCrest();
 
         // If NO crest is set yet: show the plain white cloth.
         if (crest == null || crest.icon() < 0) {
