@@ -30,9 +30,6 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
     private static final ResourceLocation SHEET1 =
             new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_1.png");
 
-
-    private static final float NOTCH_HEIGHT = 2f / 16f;
-
     public BannerBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {}
 
     @Override
@@ -138,9 +135,9 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         if (crest == null || crest.icon() < 0) {
             VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
             // front
-            putInvertedVQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+            putQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
             // back (swap x to flip winding)
-            putInvertedVQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
+            putQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
             ps.popPose();
             return;
         }
@@ -155,22 +152,22 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float v1 = ((row + 1) * 64f) / 4096f;
 
         VertexConsumer vc0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
-        putInvertedVQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
+        putQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
 
         VertexConsumer vc1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
-        putInvertedVQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
+        putQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
 
         // back side (see crest from behind)
         VertexConsumer back0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
-        putInvertedVQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+        putQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
 
         VertexConsumer back1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
-        putInvertedVQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+        putQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
 
         ps.popPose();
     }
 
-    private static void putInvertedVQuad(PoseStack ps, VertexConsumer vc,
+    private static void putQuad(PoseStack ps, VertexConsumer vc,
                                float x0, float y0, float x1, float y1, float z,
                                float u0, float v0, float u1, float v1,
                                int color, int light) {
@@ -183,23 +180,9 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         var normal = ps.last().normal();
         int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 
-
-        float xCenter = (x0 + x1) / 2f;
-        float yNotch = y0 + NOTCH_HEIGHT;
-        float uCenter = (u0 + u1) / 2f;
-
-
-        // Left half
         vc.vertex(pose, x0, y1, z).color(r, g, b, 1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-        vc.vertex(pose, xCenter, y1, z).color(r, g, b, 1f).uv(uCenter, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-        vc.vertex(pose, xCenter, yNotch, z).color(r, g, b, 1f).uv(uCenter, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-        vc.vertex(pose, x0, y0, z).color(r, g, b, 1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-
-        // Right half
-        vc.vertex(pose, xCenter, y1, z).color(r, g, b, 1f).uv(uCenter, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
         vc.vertex(pose, x1, y1, z).color(r, g, b, 1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
         vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-        vc.vertex(pose, xCenter, yNotch, z).color(r, g, b, 1f).uv(uCenter, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-
+        vc.vertex(pose, x0, y0, z).color(r, g, b, 1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
     }
 }
