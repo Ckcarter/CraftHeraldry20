@@ -58,7 +58,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
 
         // Wall banner cloth is 2 blocks tall and hangs down from the top block.
         if (isWallBanner) {
-            ps.translate(0.0, -1.0, 0.0);
+            ps.translate(0.0, -1.015625, 0.0);
         }
 
         // Cloth quad bounds
