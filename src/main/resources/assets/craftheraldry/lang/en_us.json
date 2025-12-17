@@ -8,5 +8,7 @@
   "screen.craftheraldry.crest_editor": "Crest Editor",
   "screen.craftheraldry.save": "Save",
   "screen.craftheraldry.random": "Random",
-  "screen.craftheraldry.page": "Page"
+  "screen.craftheraldry.page": "Page",
+  "item.craftheraldry.cap": "Heraldic Cap",
+  "item.craftheraldry.cap.desc": "Cosmetic headwear that leaves armor slots free."
 }
