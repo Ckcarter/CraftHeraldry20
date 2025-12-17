@@ -23,6 +23,4 @@ public class ModBlocks {
         BLOCKS.register("wall_banner", () -> new WallBannerBlock(
             BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0f).noOcclusion()
         ));
-
-
 }

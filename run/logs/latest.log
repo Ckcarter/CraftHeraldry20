@@ -1,148 +1,87 @@
-[16Dec2025 17:42:20.959] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, MOD_DEV, --assetIndex, 5, --assetsDir, C:\Users\Ché\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.8, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412]
-[16Dec2025 17:42:20.964] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.15 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
-[16Dec2025 17:42:21.082] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
-[16Dec2025 17:42:21.168] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
-[16Dec2025 17:42:21.392] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
-[16Dec2025 17:42:21.456] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/Ché/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
-[16Dec2025 17:42:21.512] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce GTX 1650 SUPER/PCIe/SSE2 GL version 4.6.0 NVIDIA 472.47, NVIDIA Corporation
-[16Dec2025 17:42:21.775] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.8\721e2d976494c8275bd81b3404e7dd109b7558c\javafmllanguage-1.20.1-47.4.8.jar is missing mods.toml file
-[16Dec2025 17:42:21.782] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.8\73022064045853db9acea4a61e8c76aad4df52d6\lowcodelanguage-1.20.1-47.4.8.jar is missing mods.toml file
-[16Dec2025 17:42:21.792] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.8\f6f8fcedd2034d8aeb4c696bae232555fbc99bd3\mclanguage-1.20.1-47.4.8.jar is missing mods.toml file
-[16Dec2025 17:42:21.792] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.8\21a451a2c815d519fd534d90eddbd8fd0c44d36e\fmlcore-1.20.1-47.4.8.jar is missing mods.toml file
-[16Dec2025 17:42:21.853] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
-[16Dec2025 17:42:23.112] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, MOD_DEV, --gameDir, ., --assetsDir, C:\Users\Ché\.gradle\caches\forge_gradle\assets, --assetIndex, 5]
-[16Dec2025 17:42:24.032] [main/WARN] [oshi.driver.windows.perfmon.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[16Dec2025 17:42:26.615] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 188 Datafixer optimizations took 111 milliseconds
-[16Dec2025 17:42:27.986] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/Ché/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20/forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar%23191!/assets/.mcassetsroot' uses unexpected schema
-[16Dec2025 17:42:27.986] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/Ché/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20/forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar%23191!/data/.mcassetsroot' uses unexpected schema
-[16Dec2025 17:42:28.010] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
-[16Dec2025 17:42:28.013] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: Dev
-[16Dec2025 17:42:28.088] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.1 build 7
-[16Dec2025 17:42:28.449] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.8, for MC 1.20.1 with MCP 20230612.114412
-[16Dec2025 17:42:28.453] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.8 Initialized
-[16Dec2025 17:42:29.116] [Render thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [craftheraldry20]
-[16Dec2025 17:42:29.219] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources
-[16Dec2025 17:42:29.370] [Worker-Main-9/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.0.06.hex, loading
-[16Dec2025 17:42:29.408] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
-[16Dec2025 17:42:30.055] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.4.8 Target: 47.4.10
-[16Dec2025 17:42:30.368] [Worker-Main-8/WARN] [net.minecraft.client.resources.model.ModelManager/]: Missing textures in model craftheraldry:scroll#inventory:
+[16Dec2025 18:29:09.157] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, MOD_DEV, --assetIndex, 5, --assetsDir, C:\Users\Ché\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.8, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412]
+[16Dec2025 18:29:09.161] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.15 by Eclipse Adoptium; OS Windows 11 arch amd64 version 10.0
+[16Dec2025 18:29:09.303] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[16Dec2025 18:29:09.402] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
+[16Dec2025 18:29:09.657] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
+[16Dec2025 18:29:09.733] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/Ché/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
+[16Dec2025 18:29:09.770] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce GTX 1650 SUPER/PCIe/SSE2 GL version 4.6.0 NVIDIA 472.47, NVIDIA Corporation
+[16Dec2025 18:29:10.020] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.8\721e2d976494c8275bd81b3404e7dd109b7558c\javafmllanguage-1.20.1-47.4.8.jar is missing mods.toml file
+[16Dec2025 18:29:10.025] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.8\73022064045853db9acea4a61e8c76aad4df52d6\lowcodelanguage-1.20.1-47.4.8.jar is missing mods.toml file
+[16Dec2025 18:29:10.032] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.8\f6f8fcedd2034d8aeb4c696bae232555fbc99bd3\mclanguage-1.20.1-47.4.8.jar is missing mods.toml file
+[16Dec2025 18:29:10.038] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\Ché\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.8\21a451a2c815d519fd534d90eddbd8fd0c44d36e\fmlcore-1.20.1-47.4.8.jar is missing mods.toml file
+[16Dec2025 18:29:10.100] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[16Dec2025 18:29:11.397] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, MOD_DEV, --gameDir, ., --assetsDir, C:\Users\Ché\.gradle\caches\forge_gradle\assets, --assetIndex, 5]
+[16Dec2025 18:29:12.255] [main/WARN] [oshi.driver.windows.perfmon.PerfmonDisabled/]: Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[16Dec2025 18:29:15.276] [Datafixer Bootstrap/INFO] [com.mojang.datafixers.DataFixerBuilder/]: 188 Datafixer optimizations took 146 milliseconds
+[16Dec2025 18:29:17.166] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/Ché/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20/forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar%23191!/assets/.mcassetsroot' uses unexpected schema
+[16Dec2025 18:29:17.166] [Render thread/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/Ché/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20/forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar%23191!/data/.mcassetsroot' uses unexpected schema
+[16Dec2025 18:29:17.204] [Render thread/INFO] [com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService/]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[16Dec2025 18:29:17.217] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Setting user: Dev
+[16Dec2025 18:29:17.343] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Backend library: LWJGL version 3.3.1 build 7
+[16Dec2025 18:29:17.774] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.8, for MC 1.20.1 with MCP 20230612.114412
+[16Dec2025 18:29:17.777] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.8 Initialized
+[16Dec2025 18:29:18.584] [Render thread/INFO] [net.minecraftforge.gametest.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [craftheraldry20]
+[16Dec2025 18:29:18.733] [Render thread/INFO] [net.minecraft.server.packs.resources.ReloadableResourceManager/]: Reloading ResourceManager: vanilla, mod_resources
+[16Dec2025 18:29:18.901] [Worker-Main-23/INFO] [net.minecraft.client.gui.font.providers.UnihexProvider/]: Found unifont_all_no_pua-15.0.06.hex, loading
+[16Dec2025 18:29:18.923] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[16Dec2025 18:29:19.589] [Forge Version Check/INFO] [net.minecraftforge.fml.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.4.8 Target: 47.4.10
+[16Dec2025 18:29:20.086] [Worker-Main-3/WARN] [net.minecraft.client.resources.model.ModelManager/]: Missing textures in model craftheraldry:scroll#inventory:
     minecraft:textures/atlas/blocks.png:craftheraldry:items/scroll
-[16Dec2025 17:42:30.368] [Worker-Main-8/WARN] [net.minecraft.client.resources.model.ModelManager/]: Missing textures in model craftheraldry:banner#inventory:
+[16Dec2025 18:29:20.086] [Worker-Main-3/WARN] [net.minecraft.client.resources.model.ModelManager/]: Missing textures in model craftheraldry:banner#inventory:
     minecraft:textures/atlas/blocks.png:craftheraldry:items/banner
-[16Dec2025 17:42:31.167] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
-[16Dec2025 17:42:31.167] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
-[16Dec2025 17:42:31.202] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on Speakers (2- High Definition Audio Device)
-[16Dec2025 17:42:31.202] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
-[16Dec2025 17:42:31.288] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
-[16Dec2025 17:42:31.295] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
-[16Dec2025 17:42:31.295] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
-[16Dec2025 17:42:31.295] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
-[16Dec2025 17:42:31.297] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
-[16Dec2025 17:42:31.299] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
-[16Dec2025 17:42:31.300] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
-[16Dec2025 17:42:31.302] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
-[16Dec2025 17:42:31.302] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
-[16Dec2025 17:42:31.464] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
-[16Dec2025 17:42:31.496] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
-[16Dec2025 17:42:31.497] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
-[16Dec2025 17:42:31.498] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
-[16Dec2025 17:42:31.744] [Realms Notification Availability checker #1/INFO] [com.mojang.realmsclient.client.RealmsClient/]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
-[16Dec2025 17:42:35.173] [Render thread/INFO] [net.minecraftforge.registries.GameData/REGISTRIES]: Injecting existing registry data into this CLIENT instance
-[16Dec2025 17:42:36.282] [Render thread/ERROR] [net.minecraft.world.item.crafting.RecipeManager/]: Parsing error loading recipe craftheraldry:tapestry_banner
-com.google.gson.JsonSyntaxException: Unknown item 'craftheraldry:tapestry_banner'
-	at net.minecraftforge.common.crafting.CraftingHelper.getItem(CraftingHelper.java:160) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraftforge.common.crafting.CraftingHelper.getItemStack(CraftingHelper.java:186) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.world.item.crafting.ShapedRecipe.itemStackFromJson(ShapedRecipe.java:301) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.world.item.crafting.ShapedRecipe$Serializer.fromJson(ShapedRecipe.java:326) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.world.item.crafting.ShapedRecipe$Serializer.fromJson(ShapedRecipe.java:316) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraftforge.common.extensions.IForgeRecipeSerializer.fromJson(IForgeRecipeSerializer.java:23) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.world.item.crafting.RecipeManager.fromJson(RecipeManager.java:174) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.world.item.crafting.RecipeManager.apply(RecipeManager.java:67) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.world.item.crafting.RecipeManager.apply(RecipeManager.java:34) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.server.packs.resources.SimplePreparableReloadListener.lambda$reload$1(SimplePreparableReloadListener.java:12) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:718) ~[?:?]
-	at java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:482) ~[?:?]
-	at net.minecraft.server.packs.resources.SimpleReloadInstance.lambda$new$3(SimpleReloadInstance.java:65) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.util.thread.BlockableEventLoop.doRunTask(BlockableEventLoop.java:146) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.util.thread.ReentrantBlockableEventLoop.doRunTask(ReentrantBlockableEventLoop.java:22) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.util.thread.BlockableEventLoop.pollTask(BlockableEventLoop.java:116) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.util.thread.BlockableEventLoop.managedBlock(BlockableEventLoop.java:129) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.loadWorldDataBlocking(WorldOpenFlows.java:163) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.loadWorldStem(WorldOpenFlows.java:113) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.doLoadLevel(WorldOpenFlows.java:181) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.doLoadLevel(WorldOpenFlows.java:169) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldOpenFlows.loadLevel(WorldOpenFlows.java:65) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldSelectionList$WorldListEntry.loadWorld(WorldSelectionList.java:575) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldSelectionList$WorldListEntry.joinWorld(WorldSelectionList.java:474) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.worldselection.WorldSelectionList$WorldListEntry.mouseClicked(WorldSelectionList.java:413) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.components.AbstractSelectionList.mouseClicked(AbstractSelectionList.java:298) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.components.events.ContainerEventHandler.mouseClicked(ContainerEventHandler.java:42) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.MouseHandler.lambda$onPress$0(MouseHandler.java:97) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.gui.screens.Screen.wrapScreenError(Screen.java:437) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.MouseHandler.onPress(MouseHandler.java:94) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.MouseHandler.lambda$setup$4(MouseHandler.java:199) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.util.thread.BlockableEventLoop.execute(BlockableEventLoop.java:90) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.MouseHandler.lambda$setup$5(MouseHandler.java:198) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at org.lwjgl.glfw.GLFWMouseButtonCallbackI.callback(GLFWMouseButtonCallbackI.java:43) ~[lwjgl-glfw-3.3.1.jar:build 7]
-	at org.lwjgl.system.JNI.invokeV(Native Method) ~[lwjgl-3.3.1.jar:build 7]
-	at org.lwjgl.glfw.GLFW.glfwWaitEventsTimeout(GLFW.java:3474) ~[lwjgl-glfw-3.3.1.jar:build 7]
-	at com.mojang.blaze3d.systems.RenderSystem.limitDisplayFPS(RenderSystem.java:207) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.Minecraft.runTick(Minecraft.java:1199) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.Minecraft.run(Minecraft.java:723) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at net.minecraft.client.main.Main.main(Main.java:218) ~[forge-1.20.1-47.4.8_mapped_parchment_1.19.3-2023.03.12-1.20-recomp.jar:?]
-	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:?]
-	at jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[?:?]
-	at jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:?]
-	at java.lang.reflect.Method.invoke(Method.java:569) ~[?:?]
-	at net.minecraftforge.fml.loading.targets.CommonLaunchHandler.runTarget(CommonLaunchHandler.java:111) ~[fmlloader-1.20.1-47.4.8.jar:?]
-	at net.minecraftforge.fml.loading.targets.CommonLaunchHandler.clientService(CommonLaunchHandler.java:99) ~[fmlloader-1.20.1-47.4.8.jar:?]
-	at net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler.devService(ForgeClientUserdevLaunchHandler.java:19) ~[fmlloader-1.20.1-47.4.8.jar:?]
-	at net.minecraftforge.fml.loading.targets.CommonDevLaunchHandler.lambda$makeService$7(CommonDevLaunchHandler.java:135) ~[fmlloader-1.20.1-47.4.8.jar:?]
-	at cpw.mods.modlauncher.LaunchServiceHandlerDecorator.launch(LaunchServiceHandlerDecorator.java:30) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:53) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.LaunchServiceHandler.launch(LaunchServiceHandler.java:71) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.Launcher.run(Launcher.java:108) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.Launcher.main(Launcher.java:78) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:26) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.modlauncher.BootstrapLaunchConsumer.accept(BootstrapLaunchConsumer.java:23) ~[modlauncher-10.0.9.jar:?]
-	at cpw.mods.bootstraplauncher.BootstrapLauncher.main(BootstrapLauncher.java:141) ~[bootstraplauncher-1.1.2.jar:?]
-[16Dec2025 17:42:36.358] [Render thread/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 7 recipes
-[16Dec2025 17:42:36.439] [Render thread/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 1271 advancements
-[16Dec2025 17:42:36.757] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Starting integrated minecraft server version 1.20.1
-[16Dec2025 17:42:36.758] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
-[16Dec2025 17:42:37.010] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
-[16Dec2025 17:42:38.209] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
-[16Dec2025 17:42:38.209] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
-[16Dec2025 17:42:38.209] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
-[16Dec2025 17:42:38.528] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 66%
-[16Dec2025 17:42:38.606] [Server thread/INFO] [net.minecraftforge.server.permission.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
-[16Dec2025 17:42:38.619] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 1601 ms
-[16Dec2025 17:42:38.695] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing view distance to 12, from 10
-[16Dec2025 17:42:38.696] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing simulation distance to 12, from 0
-[16Dec2025 17:42:39.121] [Render thread/WARN] [io.netty.util.internal.SystemPropertyUtil/]: Unable to parse the boolean system property 'java.net.preferIPv6Addresses':system - using the default value: false
-[16Dec2025 17:42:39.515] [Netty Local Client IO #0/INFO] [net.minecraftforge.network.NetworkHooks/]: Connected to a modded server.
-[16Dec2025 17:42:39.545] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: Dev[local:E:e6659edf] logged in with entity id 16 at (2.8647147756979456, -60.0, 5.734552940967631)
-[16Dec2025 17:42:39.592] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev joined the game
-[16Dec2025 17:42:40.264] [Render thread/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 20 advancements
-[16Dec2025 17:42:43.307] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
-[16Dec2025 17:42:43.326] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
-[16Dec2025 17:42:43.334] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
-[16Dec2025 17:42:43.338] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
-[16Dec2025 17:43:13.207] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
-[16Dec2025 17:43:13.222] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
-[16Dec2025 17:43:13.228] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
-[16Dec2025 17:43:13.232] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
-[16Dec2025 17:43:14.061] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Dev lost connection: Disconnected
-[16Dec2025 17:43:14.061] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev left the game
-[16Dec2025 17:43:14.086] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Stopping singleplayer server as player logged out
-[16Dec2025 17:43:14.110] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
-[16Dec2025 17:43:14.110] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
-[16Dec2025 17:43:14.110] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
-[16Dec2025 17:43:14.343] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
-[16Dec2025 17:43:14.650] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
-[16Dec2025 17:43:14.654] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
-[16Dec2025 17:43:14.676] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (New World (1)): All chunks are saved
-[16Dec2025 17:43:14.676] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
-[16Dec2025 17:43:14.676] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
-[16Dec2025 17:43:14.676] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
-[16Dec2025 17:43:15.351] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Stopping!
+[16Dec2025 18:29:21.202] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:item.goat_horn.play
+[16Dec2025 18:29:21.202] [Render thread/WARN] [net.minecraft.client.sounds.SoundEngine/]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[16Dec2025 18:29:21.246] [Render thread/INFO] [com.mojang.blaze3d.audio.Library/]: OpenAL initialized on device OpenAL Soft on Speakers (2- High Definition Audio Device)
+[16Dec2025 18:29:21.247] [Render thread/INFO] [net.minecraft.client.sounds.SoundEngine/SOUNDS]: Sound engine started
+[16Dec2025 18:29:21.377] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[16Dec2025 18:29:21.384] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[16Dec2025 18:29:21.384] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[16Dec2025 18:29:21.385] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[16Dec2025 18:29:21.385] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[16Dec2025 18:29:21.388] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[16Dec2025 18:29:21.390] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[16Dec2025 18:29:21.390] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[16Dec2025 18:29:21.390] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[16Dec2025 18:29:21.571] [Render thread/WARN] [net.minecraft.client.renderer.ShaderInstance/]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[16Dec2025 18:29:21.607] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
+[16Dec2025 18:29:21.608] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
+[16Dec2025 18:29:21.608] [Render thread/INFO] [net.minecraft.client.renderer.texture.TextureAtlas/]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[16Dec2025 18:29:22.060] [Realms Notification Availability checker #1/INFO] [com.mojang.realmsclient.client.RealmsClient/]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[16Dec2025 18:29:26.344] [Render thread/INFO] [net.minecraftforge.registries.GameData/REGISTRIES]: Injecting existing registry data into this CLIENT instance
+[16Dec2025 18:29:27.548] [Render thread/INFO] [net.minecraft.world.item.crafting.RecipeManager/]: Loaded 7 recipes
+[16Dec2025 18:29:27.642] [Render thread/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 1271 advancements
+[16Dec2025 18:29:27.940] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Starting integrated minecraft server version 1.20.1
+[16Dec2025 18:29:27.940] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Generating keypair
+[16Dec2025 18:29:28.161] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Preparing start region for dimension minecraft:overworld
+[16Dec2025 18:29:29.300] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[16Dec2025 18:29:29.300] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[16Dec2025 18:29:29.372] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Preparing spawn area: 0%
+[16Dec2025 18:29:29.762] [Render thread/INFO] [net.minecraft.server.level.progress.LoggerChunkProgressListener/]: Time elapsed: 1394 ms
+[16Dec2025 18:29:29.763] [Server thread/INFO] [net.minecraftforge.server.permission.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[16Dec2025 18:29:29.863] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing view distance to 12, from 10
+[16Dec2025 18:29:29.865] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Changing simulation distance to 12, from 0
+[16Dec2025 18:29:30.318] [Render thread/WARN] [io.netty.util.internal.SystemPropertyUtil/]: Unable to parse the boolean system property 'java.net.preferIPv6Addresses':system - using the default value: false
+[16Dec2025 18:29:30.772] [Netty Local Client IO #0/INFO] [net.minecraftforge.network.NetworkHooks/]: Connected to a modded server.
+[16Dec2025 18:29:30.804] [Server thread/INFO] [net.minecraft.server.players.PlayerList/]: Dev[local:E:b0782d46] logged in with entity id 18 at (5.980219709469669, -60.0, 3.395331254404012)
+[16Dec2025 18:29:30.850] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev joined the game
+[16Dec2025 18:29:31.392] [Render thread/INFO] [net.minecraft.advancements.AdvancementList/]: Loaded 20 advancements
+[16Dec2025 18:30:02.131] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: [Dev: Set the time to 1000]
+[16Dec2025 18:30:02.143] [Render thread/INFO] [net.minecraft.client.gui.components.ChatComponent/]: [System] [CHAT] Set the time to 1000
+[16Dec2025 18:33:06.068] [Server thread/INFO] [net.minecraft.client.server.IntegratedServer/]: Saving and pausing game...
+[16Dec2025 18:33:06.089] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[16Dec2025 18:33:06.098] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[16Dec2025 18:33:06.104] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[16Dec2025 18:33:06.820] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Dev lost connection: Disconnected
+[16Dec2025 18:33:06.820] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Dev left the game
+[16Dec2025 18:33:06.847] [Server thread/INFO] [net.minecraft.server.network.ServerGamePacketListenerImpl/]: Stopping singleplayer server as player logged out
+[16Dec2025 18:33:06.873] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Stopping server
+[16Dec2025 18:33:06.873] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving players
+[16Dec2025 18:33:06.874] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving worlds
+[16Dec2025 18:33:07.112] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:overworld
+[16Dec2025 18:33:07.386] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_end
+[16Dec2025 18:33:07.390] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: Saving chunks for level 'ServerLevel[New World]'/minecraft:the_nether
+[16Dec2025 18:33:07.415] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (New World (1)): All chunks are saved
+[16Dec2025 18:33:07.415] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[16Dec2025 18:33:07.415] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[16Dec2025 18:33:07.415] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: ThreadedAnvilChunkStorage: All dimensions are saved
+[16Dec2025 18:33:08.806] [Render thread/INFO] [net.minecraft.client.Minecraft/]: Stopping!
