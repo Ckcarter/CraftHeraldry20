@@ -18,5 +18,6 @@ public class ModNetwork {
 
     public static void init() {
         CHANNEL.registerMessage(index++, ScrollUpdatePacket.class, ScrollUpdatePacket::encode, ScrollUpdatePacket::decode, ScrollUpdatePacket::handle);
+        CHANNEL.registerMessage(index++, CapeSyncPacket.class, CapeSyncPacket::encode, CapeSyncPacket::decode, CapeSyncPacket::handle);
     }
 }

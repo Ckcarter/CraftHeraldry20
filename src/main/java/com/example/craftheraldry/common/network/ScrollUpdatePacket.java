@@ -7,6 +7,9 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+/**
+ * Client -> Server: updates the crest stored on the scroll currently held by the player.
+ */
 public class ScrollUpdatePacket {
     private final CrestData crest;
 
@@ -15,16 +18,12 @@ public class ScrollUpdatePacket {
     }
 
     public static void encode(ScrollUpdatePacket msg, FriendlyByteBuf buf) {
-        buf.writeInt(msg.crest.color1());
-        buf.writeInt(msg.crest.color2());
-        buf.writeShort(msg.crest.icon());
+        buf.writeNbt(msg.crest == null ? null : msg.crest.toTag());
     }
 
     public static ScrollUpdatePacket decode(FriendlyByteBuf buf) {
-        int c1 = buf.readInt();
-        int c2 = buf.readInt();
-        short icon = buf.readShort();
-        return new ScrollUpdatePacket(new CrestData(c1, c2, icon));
+        var tag = buf.readNbt();
+        return new ScrollUpdatePacket(CrestData.fromTag(tag));
     }
 
     public static void handle(ScrollUpdatePacket msg, Supplier<NetworkEvent.Context> ctx) {

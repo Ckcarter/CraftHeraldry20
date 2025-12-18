@@ -37,12 +37,41 @@ public class ScrollItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    ItemStack stack = player.getItemInHand(hand);
 
-        if (level.isClientSide) openEditor(stack);
+    // Shift-right-click toggles the cosmetic cape using the crest stored on this scroll.
+    if (player.isShiftKeyDown()) {
+        if (!level.isClientSide) {
+            CrestData crest = getCrest(stack);
+            // If scroll has no valid crest, treat as "remove cape"
+            boolean hasValid = crest != null && crest.icon() >= 0;
+
+            if (com.example.craftheraldry.common.util.CapeData.hasCape(player)) {
+                com.example.craftheraldry.common.util.CapeData.clearCape(player);
+                com.example.craftheraldry.common.network.ModNetwork.CHANNEL.send(
+                        net.minecraftforge.network.PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                        new com.example.craftheraldry.common.network.CapeSyncPacket(player.getUUID(), false, null)
+                );
+                player.displayClientMessage(Component.translatable("message.craftheraldry.cape_removed"), true);
+            } else if (hasValid) {
+                com.example.craftheraldry.common.util.CapeData.setCape(player, crest);
+                com.example.craftheraldry.common.network.ModNetwork.CHANNEL.send(
+                        net.minecraftforge.network.PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                        new com.example.craftheraldry.common.network.CapeSyncPacket(player.getUUID(), crest)
+                );
+                player.displayClientMessage(Component.translatable("message.craftheraldry.cape_equipped"), true);
+            } else {
+                player.displayClientMessage(Component.translatable("message.craftheraldry.cape_no_crest"), true);
+            }
+        }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
+
+    // Normal right-click opens the crest editor (client-side).
+    if (level.isClientSide) openEditor(stack);
+    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+}
 
 
 

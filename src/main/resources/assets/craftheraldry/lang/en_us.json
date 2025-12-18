@@ -10,5 +10,8 @@
   "screen.craftheraldry.random": "Random",
   "screen.craftheraldry.page": "Page",
   "item.craftheraldry.cap": "Heraldic Cap",
-  "item.craftheraldry.cap.desc": "Cosmetic headwear that leaves armor slots free."
+  "item.craftheraldry.cap.desc": "Cosmetic headwear that leaves armor slots free.",
+  "message.craftheraldry.cape_equipped": "Cape equipped.",
+  "message.craftheraldry.cape_removed": "Cape removed.",
+  "message.craftheraldry.cape_no_crest": "This scroll doesn't have a crest selected."
 }
