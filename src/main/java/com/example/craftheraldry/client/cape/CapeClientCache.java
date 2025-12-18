@@ -143,10 +143,12 @@ public final class CapeClientCache {
 
         // Fill the entire 64x32 cape texture with a squashed version of the 64x64 icon.
         // (This produces a "solid" look across all cape UV islands.)
+        final int ICON_SIZE = 64;
         for (int y = 0; y < H; y++) {
-            int iy = Math.min(63, y * 2);
+            int iy = Math.min(ICON_SIZE - 1, (int) ((y + 0.5f) * ICON_SIZE / H));
             for (int x = 0; x < W; x++) {
-                int ix = x;
+                int ix = Math.min(ICON_SIZE - 1, (int) ((x + 0.5f) * ICON_SIZE / W));
+                ;
 
                 int p0 = sheet0.getPixelRGBA(sx + ix, sy + iy);
                 int p1 = sheet1.getPixelRGBA(sx + ix, sy + iy);
