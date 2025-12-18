@@ -1,6 +1,5 @@
 package com.example.craftheraldry.client.renderer;
 
-import com.example.craftheraldry.CraftHeraldry;
 import com.example.craftheraldry.client.cape.CapeClientCache;
 import com.example.craftheraldry.common.util.CrestData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,16 +12,16 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
+
+import java.lang.reflect.Field;
 
 /**
  * Vanilla-style cape layer that renders a thin cloth cape with the same sway/bob math as Mojang's
@@ -30,12 +29,7 @@ import org.joml.Matrix4f;
  */
 public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
 
-    private static final ResourceLocation CLOTH_BASE =
-            new ResourceLocation(CraftHeraldry.MODID, "textures/entity/banner_cloth.png");
-    private static final ResourceLocation SHEET0 =
-            new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_0.png");
-    private static final ResourceLocation SHEET1 =
-            new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_1.png");
+    private static Field CLOAK_FIELD;
 
     public CrestCapeLayer(RenderLayerParent<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> parent) {
         super(parent);
@@ -63,6 +57,9 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
 
         CrestData crest = CapeClientCache.get(player.getUUID());
         if (crest == null || crest.icon() < 0) return;
+
+        ResourceLocation capeTex = CapeClientCache.getCapeTexture(player.getUUID());
+        if (capeTex == null) return;
 
         ps.pushPose();
 
@@ -102,77 +99,31 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         ps.mulPose(Axis.ZP.rotationDegrees(f3 / 2.0F));
         ps.mulPose(Axis.YP.rotationDegrees(180.0F - f3 / 2.0F));
 
-        // --- Geometry: a thin 10px wide x 16px tall cape plane, double-sided ---
-        // Vanilla-ish size.
-        float x0 = -5f / 16f;
-        float x1 =  5f / 16f;
-        float y0 =  0f / 16f;
-        float y1 = 16f / 16f;
-        float z  =  0f;
-
-        // Use translucent so alpha in the icon sheets works correctly.
-        VertexConsumer base = buf.getBuffer(RenderType.entityTranslucent(CLOTH_BASE));
-        drawDoubleSided(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
-
-        // Crest icon UVs (64x64 icons packed in 2048x4096 sheets).
-        int icon = crest.icon();
-        int col = icon % 32;
-        int row = icon / 32;
-        float u0 = (col * 64f) / 2048f;
-        float v0 = (row * 64f) / 4096f;
-        float u1 = ((col + 1) * 64f) / 2048f;
-        float v1 = ((row + 1) * 64f) / 4096f;
-
-        VertexConsumer vc0 = buf.getBuffer(RenderType.entityTranslucent(SHEET0));
-        drawDoubleSided(ps, vc0, x0, y0, x1, y1, z, u0, v0, u1, v1, crest.color1(), light);
-
-        VertexConsumer vc1 = buf.getBuffer(RenderType.entityTranslucent(SHEET1));
-        drawDoubleSided(ps, vc1, x0, y0, x1, y1, z, u0, v0, u1, v1, crest.color2(), light);
+        // --- Vanilla geometry ---
+        // Render the actual cloak ModelPart from the parent player model.
+        // This is what makes it match vanilla cape size/thickness/UVs.
+        VertexConsumer vc = buf.getBuffer(RenderType.entitySolid(capeTex));
+        ModelPart cloak = getCloakPart(this.getParentModel());
+        if (cloak != null) {
+            cloak.render(ps, vc, light, OverlayTexture.NO_OVERLAY);
+        }
 
         ps.popPose();
     }
 
-    /**
-     * Draws the cape as two very-close quads so it is visible from both sides with correct lighting.
-     * Back face flips U so the image reads the same when seen from behind.
-     */
-    private static void drawDoubleSided(PoseStack ps,
-                                        VertexConsumer vc,
-                                        float x0, float y0, float x1, float y1,
-                                        float z,
-                                        float u0, float v0, float u1, float v1,
-                                        int color,
-                                        int light) {
-        // Front (+Z)
-        putQuad(ps, vc, x0, y0, x1, y1, z + 0.0006f, 1.0f, u0, v0, u1, v1, color, light);
-        // Back (-Z) with flipped U
-        putQuad(ps, vc, x0, y0, x1, y1, z - 0.0006f, -1.0f, u1, v0, u0, v1, color, light);
+    private static ModelPart getCloakPart(PlayerModel<?> model) {
+        // In Mojmap PlayerModel has a 'cloak' ModelPart. Use reflection so we don't hard-fail
+        // if mappings/visibility differ.
+        try {
+            if (CLOAK_FIELD == null) {
+                CLOAK_FIELD = model.getClass().getDeclaredField("cloak");
+                CLOAK_FIELD.setAccessible(true);
+            }
+            Object v = CLOAK_FIELD.get(model);
+            return (v instanceof ModelPart mp) ? mp : null;
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
-    private static void putQuad(PoseStack ps,
-                                VertexConsumer vc,
-                                float x0, float y0, float x1, float y1,
-                                float z,
-                                float nz,
-                                float u0, float v0, float u1, float v1,
-                                int color,
-                                int light) {
-        Matrix4f pose = ps.last().pose();
-        Matrix3f normal = ps.last().normal();
-
-        float r = ((color >> 16) & 0xFF) / 255f;
-        float g = ((color >> 8) & 0xFF) / 255f;
-        float b = (color & 0xFF) / 255f;
-
-        int ov = OverlayTexture.NO_OVERLAY;
-
-        // Two triangles.
-        vc.vertex(pose, x0, y1, z).color(r, g, b, 1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, nz).endVertex();
-        vc.vertex(pose, x1, y1, z).color(r, g, b, 1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, nz).endVertex();
-        vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, nz).endVertex();
-
-        vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, nz).endVertex();
-        vc.vertex(pose, x0, y0, z).color(r, g, b, 1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, nz).endVertex();
-        vc.vertex(pose, x0, y1, z).color(r, g, b, 1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, nz).endVertex();
-    }
 }
