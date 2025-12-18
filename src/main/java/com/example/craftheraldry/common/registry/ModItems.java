@@ -1,6 +1,7 @@
 package com.example.craftheraldry.common.registry;
 
 import com.example.craftheraldry.CraftHeraldry;
+import com.example.craftheraldry.common.item.CapItem;
 import com.example.craftheraldry.common.item.ScrollItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.BlockItem;
@@ -23,4 +24,7 @@ public class ModItems {
         ));
     public static final RegistryObject<Item> SCROLL =
         ITEMS.register("scroll", () -> new ScrollItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> CAP =
+            ITEMS.register("cap", () -> new CapItem(new Item.Properties()));
 }
+
