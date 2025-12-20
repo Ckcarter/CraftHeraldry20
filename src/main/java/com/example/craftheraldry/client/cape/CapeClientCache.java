@@ -141,25 +141,47 @@ public final class CapeClientCache {
         int c1 = 0xFF000000 | (crest.color1() & 0x00FFFFFF);
         int c2 = 0xFF000000 | (crest.color2() & 0x00FFFFFF);
 
-        // Fill the entire 64x32 cape texture with a squashed version of the 64x64 icon.
-        // (This produces a "solid" look across all cape UV islands.)
-        final int ICON_SIZE = 64;
+        // Fill the cape with a base color so the cloth still renders when we only place a
+        // small crest patch on the back face.
         for (int y = 0; y < H; y++) {
-            int iy = Math.min(ICON_SIZE - 1, (int) ((y + 0.5f) * ICON_SIZE / H));
-            for (int x = 0; x < W; x++) {
-                int ix = Math.min(ICON_SIZE - 1, (int) ((x + 0.5f) * ICON_SIZE / W));
-                ;
+
+            for (int x = 0; x < W; x++) out.setPixelRGBA(x, y, c1);
+        }
+
+        // Place the crest on the *front* face of the vanilla Mojang cape (the inner panel).
+        // Vanilla cloak model is a 10x16x1 box with texOffs(0,0). The two large faces are:
+        // - North face ("front" / inner):  U=1..10,  V=1..16  (10x16)
+        // - South face ("back"  / outer):  U=12..21, V=1..16  (10x16)
+        // To keep the icon crisp and undistorted, we fit a square crest inside 10x16 and
+        // downscale with nearest-neighbor.
+        final int FACE_U0 = 1;
+        final int FACE_V0 = 1;
+        final int FACE_W  = 10;
+        final int FACE_H  = 16;
+
+        final int ICON_SIZE = 64;
+        final int crestSize = Math.min(FACE_W, FACE_H); // 10
+        // Nearest-neighbor sample from the 64x64 icon into a crestSize x crestSize square.
+        int crestX0 = FACE_U0 + (FACE_W - crestSize) / 2;
+        int crestY0 = FACE_V0 + (FACE_H - crestSize) / 2;
+
+        for (int y = 0; y < crestSize; y++) {
+            int iy = (y * ICON_SIZE) / crestSize;
+            for (int x = 0; x < crestSize; x++) {
+                int ix = (x * ICON_SIZE) / crestSize;
 
                 int p0 = sheet0.getPixelRGBA(sx + ix, sy + iy);
                 int p1 = sheet1.getPixelRGBA(sx + ix, sy + iy);
 
-                int outPx = 0x00000000;
+                int dstX = crestX0 + x;
+                int dstY = crestY0 + y;
+
+                int outPx = out.getPixelRGBA(dstX, dstY);
                 outPx = blendTint(outPx, p0, c1);
                 outPx = blendTint(outPx, p1, c2);
-                out.setPixelRGBA(x, y, outPx);
+                out.setPixelRGBA(dstX, dstY, outPx);
             }
         }
-
         sheet0.close();
         sheet1.close();
         return out;
