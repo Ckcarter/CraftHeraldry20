@@ -1,8 +1,6 @@
 package com.example.craftheraldry.common.item;
 
-import com.example.craftheraldry.client.screen.CrestEditorScreen;
 import com.example.craftheraldry.common.util.CrestData;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -14,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 
 public class ScrollItem extends Item {
 
@@ -40,13 +39,15 @@ public class ScrollItem extends Item {
 public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
     ItemStack stack = player.getItemInHand(hand);
 
-    // Shift-right-click opens the crest editor (client-side).
+    // Shift + Right Click -> Open the crest editor (client-side).
     if (player.isShiftKeyDown()) {
-        if (level.isClientSide) openEditor(stack);
+        if (level.isClientSide) {
+            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnly.openEditor(stack));
+        }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
-    // Normal right-click toggles the cosmetic cape using the crest stored on this scroll (server-side).
+    // Right Click -> Toggle / mount the cosmetic cape (server-side).
     if (!level.isClientSide) {
         CrestData crest = getCrest(stack);
         // If scroll has no valid crest, treat as "remove cape"
@@ -74,12 +75,18 @@ public InteractionResultHolder<ItemStack> use(Level level, Player player, Intera
     return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
 }
 
-
-
-
+    /**
+     * Client-only code lives in this nested class so dedicated servers never try to load
+     * client classes like Minecraft / screens.
+     */
     @OnlyIn(Dist.CLIENT)
-    private static void openEditor(ItemStack stack) {
-        CrestData crest = getCrest(stack);
-        Minecraft.getInstance().setScreen(new CrestEditorScreen(crest));
+    private static final class ClientOnly {
+        private static void openEditor(ItemStack stack) {
+            CrestData crest = getCrest(stack);
+            net.minecraft.client.Minecraft.getInstance().setScreen(
+                    new com.example.craftheraldry.client.screen.CrestEditorScreen(crest)
+            );
+        }
     }
 }
+
