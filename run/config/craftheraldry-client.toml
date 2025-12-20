@@ -1,0 +1,12 @@
+
+[cape]
+	#How the crest is sampled into the cape crest area (FIT = whole icon, CROP = zoomed)
+	#Allowed Values: FIT, CROP
+	crestMode = "CROP"
+	#Inset the crest inward horizontally (in cape pixels). 0 disables.
+	#Range: 0 ~ 6
+	crestInsetPx = 1
+	#Crop/zoom amount when using CROP mode (100-300)
+	#Range: 100 ~ 300
+	cropZoomPercent = 150
+

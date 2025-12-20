@@ -16,6 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class CapeClientCache {
 
+    private static final float CREST_STRETCH_X = 1.0f;
+    private static final float CREST_STRETCH_Y = 1.0f;
+
     private static final ResourceLocation SHEET0 =
             new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_0.png");
     private static final ResourceLocation SHEET1 =
@@ -65,21 +68,13 @@ public final class CapeClientCache {
 
         NativeImage img = buildCapeImage(crest);
         e.dyn = new DynamicTexture(img);
-        e.dyn.setFilter(false, false); // critical: nearest, no mipmaps
+        e.dyn.setFilter(false, false);
         e.texId = new ResourceLocation(CraftHeraldry.MODID, "dynamic_capes/" + playerId);
         tm.register(e.texId, e.dyn);
     }
 
-    public static void clearAll() {
-        TextureManager tm = Minecraft.getInstance().getTextureManager();
-        for (Entry e : CAPES.values()) {
-            if (e != null && e.texId != null) tm.release(e.texId);
-        }
-        CAPES.clear();
-    }
-
     private static NativeImage buildCapeImage(CrestData crest) {
-        final int S = 8; // resolution scale (4/8/16)
+        final int S = 8;
         final int W = 64 * S;
         final int H = 32 * S;
 
@@ -91,11 +86,8 @@ public final class CapeClientCache {
 
         NativeImage sheet0 = loadPng(SHEET0);
         NativeImage sheet1 = loadPng(SHEET1);
-
+        // If resources failed to load, return a transparent cape to avoid client crashes.
         if (sheet0 == null || sheet1 == null) {
-            for (int y = 0; y < H; y++)
-                for (int x = 0; x < W; x++)
-                    out.setPixelRGBA(x, y, 0xFFFFFFFF);
             if (sheet0 != null) sheet0.close();
             if (sheet1 != null) sheet1.close();
             return out;
@@ -121,9 +113,10 @@ public final class CapeClientCache {
         final int FRONT_U0 = 1 * S;
         final int BACK_U0  = 12 * S;
 
-        blitCrestNearestFit(sheet0, sheet1, out, sx, sy, c1, c2,
+        blitCrest(sheet0, sheet1, out, sx, sy, c1, c2,
                 FRONT_U0, FACE_V0, FACE_W, FACE_H);
-        blitCrestNearestFit(sheet0, sheet1, out, sx, sy, c1, c2,
+
+        blitCrest(sheet0, sheet1, out, sx, sy, c1, c2,
                 BACK_U0, FACE_V0, FACE_W, FACE_H);
 
         sheet0.close();
@@ -131,35 +124,39 @@ public final class CapeClientCache {
         return out;
     }
 
-    private static void blitCrestNearestFit(NativeImage sheet0, NativeImage sheet1, NativeImage dst,
-                                           int srcX0, int srcY0,
-                                           int tint1ABGR, int tint2ABGR,
-                                           int dstX0, int dstY0, int dstW, int dstH) {
-        final int ICON = 64;
+    private static void blitCrest(NativeImage sheet0, NativeImage sheet1, NativeImage dst,
+                                  int srcX0, int srcY0,
+                                  int tint1ABGR, int tint2ABGR,
+                                  int dstX0, int dstY0, int dstW, int dstH) {
 
+        final int ICON = 64;
+        // IMPORTANT:
+        // We intentionally draw into the full destination rectangle (dstW x dstH) instead of
+        // forcing a square. This lets the crest "canvas" stretch up/down independently from
+        // left/right while staying pixel-crisp (nearest-neighbor sampling).
         int drawW = dstW;
         int drawH = dstH;
 
-        if (dstW < dstH) drawH = dstW;
-        else if (dstH < dstW) drawW = dstH;
-
-        int offX = (dstW - drawW) / 2;
-        int offY = (dstH - drawH) / 2;
+        float c = (ICON - 1) / 2f;
 
         for (int y = 0; y < drawH; y++) {
-            int iy = (y * ICON) / drawH;
+            int by = (y * ICON) / drawH;
+            int iy = Math.round(c + ((by - c) / CREST_STRETCH_Y));
+            iy = Math.max(0, Math.min(ICON - 1, iy));
+
             for (int x = 0; x < drawW; x++) {
-                int ix = (x * ICON) / drawW;
+                int bx = (x * ICON) / drawW;
+                int ix = Math.round(c + ((bx - c) / CREST_STRETCH_X));
+                ix = Math.max(0, Math.min(ICON - 1, ix));
 
                 int m0 = sheet0.getPixelRGBA(srcX0 + ix, srcY0 + iy);
                 int m1 = sheet1.getPixelRGBA(srcX0 + ix, srcY0 + iy);
 
-                int dx = dstX0 + offX + x;
-                int dy = dstY0 + offY + y;
+                int dx = dstX0 + x;
+                int dy = dstY0 + y;
 
                 int base = dst.getPixelRGBA(dx, dy);
-                int px = base;
-                px = blendMultiplyTint(px, m0, tint1ABGR);
+                int px = blendMultiplyTint(base, m0, tint1ABGR);
                 px = blendMultiplyTint(px, m1, tint2ABGR);
                 dst.setPixelRGBA(dx, dy, px);
             }
@@ -169,16 +166,13 @@ public final class CapeClientCache {
     private static int rgbToAbgr(int rgb) {
         int r = (rgb >>> 16) & 0xFF;
         int g = (rgb >>> 8) & 0xFF;
-        int b = (rgb) & 0xFF;
+        int b = rgb & 0xFF;
         return 0xFF000000 | (b << 16) | (g << 8) | r;
     }
 
     private static NativeImage loadPng(ResourceLocation loc) {
-        try {
-            InputStream in = Minecraft.getInstance().getResourceManager().open(loc);
-            try (in) {
-                return NativeImage.read(in);
-            }
+        try (InputStream in = Minecraft.getInstance().getResourceManager().open(loc)) {
+            return NativeImage.read(in);
         } catch (IOException e) {
             return null;
         }
@@ -190,11 +184,11 @@ public final class CapeClientCache {
 
         int mb = (maskABGR >>> 16) & 0xFF;
         int mg = (maskABGR >>> 8) & 0xFF;
-        int mr = (maskABGR) & 0xFF;
+        int mr = maskABGR & 0xFF;
 
         int tb = (tintABGR >>> 16) & 0xFF;
         int tg = (tintABGR >>> 8) & 0xFF;
-        int tr = (tintABGR) & 0xFF;
+        int tr = tintABGR & 0xFF;
 
         int srcB = (mb * tb) / 255;
         int srcG = (mg * tg) / 255;
@@ -203,15 +197,15 @@ public final class CapeClientCache {
         int da = (dstABGR >>> 24) & 0xFF;
         int db = (dstABGR >>> 16) & 0xFF;
         int dg = (dstABGR >>> 8) & 0xFF;
-        int dr = (dstABGR) & 0xFF;
+        int dr = dstABGR & 0xFF;
 
         float a = sa / 255f;
         float ia = 1f - a;
 
-        int outA = (int) (sa + da * ia);
-        int outR = (int) (srcR * a + dr * ia);
-        int outG = (int) (srcG * a + dg * ia);
-        int outB = (int) (srcB * a + db * ia);
+        int outA = (int)(sa + da * ia);
+        int outR = (int)(srcR * a + dr * ia);
+        int outG = (int)(srcG * a + dg * ia);
+        int outB = (int)(srcB * a + db * ia);
 
         return (outA << 24) | (outB << 16) | (outG << 8) | outR;
     }
