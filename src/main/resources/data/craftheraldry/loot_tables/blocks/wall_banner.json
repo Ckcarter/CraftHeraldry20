@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "craftheraldry:wall_banner"
+          "name": "craftheraldry:banner"
         }
       ],
       "conditions": [
