@@ -145,19 +145,29 @@ public class BannerBlock extends Block implements EntityBlock {
         }
     }
 
+
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide) {
-            DoubleBlockHalf half = state.getValue(HALF);
-            BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
-            BlockState other = level.getBlockState(otherPos);
-            if (other.is(this) && other.getValue(HALF) != half) {
-                level.setBlock(otherPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 35);
-                level.levelEvent(player, 2001, otherPos, Block.getId(other));
+public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    if (!level.isClientSide) {
+        DoubleBlockHalf half = state.getValue(HALF);
+        BlockPos otherPos = (half == DoubleBlockHalf.LOWER) ? pos.above() : pos.below();
+        BlockState other = level.getBlockState(otherPos);
+
+        // If the other half is ours, remove it too.
+        if (other.is(this) && other.getValue(HALF) != half) {
+
+            // Vanilla door behavior: breaking the UPPER half should still drop the item.
+            // Our loot table will only drop on the LOWER half, so we manually drop when the UPPER is mined.
+            if (half == DoubleBlockHalf.UPPER && !player.isCreative()) {
+                popResource(level, otherPos, new ItemStack(this.asItem()));
             }
+
+            level.setBlock(otherPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 35);
+            level.levelEvent(player, 2001, otherPos, Block.getId(other));
         }
-        super.playerWillDestroy(level, pos, state, player);
     }
+    super.playerWillDestroy(level, pos, state, player);
+}
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {

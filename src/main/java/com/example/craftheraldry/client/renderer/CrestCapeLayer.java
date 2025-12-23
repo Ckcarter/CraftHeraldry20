@@ -74,7 +74,8 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         if (capeTex == null) return;
 
         ps.pushPose();
-        ps.translate(0.0F, 0.0F, 0.125F);
+        // Match vanilla Elytra spacing (~2px)
+        ps.translate(0.0F, 0.0F, 3.0F / 16.0F);
 
         double d0 = Mth.lerp(partialTicks, player.xCloakO, player.xCloak) - Mth.lerp(partialTicks, player.xo, player.getX());
         double d1 = Mth.lerp(partialTicks, player.yCloakO, player.yCloak) - Mth.lerp(partialTicks, player.yo, player.getY());

@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class WallBannerBlock extends Block implements EntityBlock {
 
-    public static final DirectionProperty FACING = BannerBlock.FACING;
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final VoxelShape NORTH = Block.box(1, 0, 14, 15, 16, 16);
     private static final VoxelShape SOUTH = Block.box(1, 0, 0, 15, 16, 2);
