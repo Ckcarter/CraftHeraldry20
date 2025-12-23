@@ -6,13 +6,21 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "craftheraldry:banner"
+          "name": "craftheraldry:banner",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                { "source": "crest", "target": "Crest", "op": "replace" },
+                { "source": "locked", "target": "Locked", "op": "replace" }
+              ]
+            }
+          ]
         }
       ],
       "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
+        { "condition": "minecraft:survives_explosion" }
       ]
     }
   ]

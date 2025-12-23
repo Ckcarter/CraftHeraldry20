@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -51,6 +52,25 @@ public class WallBannerBlock extends Block implements EntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (level.isClientSide) return;
+        if (level.getBlockEntity(pos) instanceof BannerBlockEntity be) {
+            be.readFromItem(stack);
+            be.setChanged();
+            ((ServerLevel) level).sendBlockUpdated(pos, state, state, 3);
+        }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+        ItemStack out = new ItemStack(this.asItem());
+        if (level.getBlockEntity(pos) instanceof BannerBlockEntity be) {
+            be.writeToItem(out);
+        }
+        return out;
     }
 
     @Nullable

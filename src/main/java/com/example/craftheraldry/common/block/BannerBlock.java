@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,168 +20,75 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
-import java.util.Map;
-
+/**
+ * Vanilla-style standing banner:
+ * - one block only
+ * - ROTATION_16 property
+ * - rendered entirely by the BlockEntityRenderer (RenderShape.INVISIBLE)
+ * - crest is stored on the shared BannerBlockEntity
+ */
 public class BannerBlock extends Block implements EntityBlock {
 
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+    public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
 
-    // Lower half: pole segment only (block-space 0..16)
-    private static final VoxelShape LOWER_NORTH = Block.box(7, 0, 7, 9, 16, 9);
-
-    // Upper half: pole segment + crossbar + cloth volume (block-space 0..16)
-    private static final VoxelShape UPPER_NORTH = Shapes.or(
-            Block.box(7, 0, 7, 9, 16, 9),           // upper pole segment
-            Block.box(2, 14, 7, 14, 16, 9),         // crossbar
-            Block.box(1, 3, 6.5, 15, 16, 7.5)       // cloth (this half)
-    );
-
-    private static final Map<Direction, VoxelShape> LOWER_SHAPES = makeShapes(LOWER_NORTH);
-    private static final Map<Direction, VoxelShape> UPPER_SHAPES = makeShapes(UPPER_NORTH);
-
-    private static Map<Direction, VoxelShape> makeShapes(VoxelShape north) {
-        Map<Direction, VoxelShape> map = new EnumMap<>(Direction.class);
-        map.put(Direction.NORTH, north);
-        map.put(Direction.EAST, rotateShape(north, Rotation.CLOCKWISE_90));
-        map.put(Direction.SOUTH, rotateShape(north, Rotation.CLOCKWISE_180));
-        map.put(Direction.WEST, rotateShape(north, Rotation.COUNTERCLOCKWISE_90));
-        return map;
-    }
-
-    private static VoxelShape rotateShape(VoxelShape shape, Rotation rot) {
-        VoxelShape[] out = new VoxelShape[]{Shapes.empty()};
-
-        shape.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            double nMinX=minX, nMinZ=minZ, nMaxX=maxX, nMaxZ=maxZ;
-
-            switch (rot) {
-                case CLOCKWISE_90 -> {
-                    nMinX = 1 - maxZ; nMaxX = 1 - minZ;
-                    nMinZ = minX;     nMaxZ = maxX;
-                }
-                case CLOCKWISE_180 -> {
-                    nMinX = 1 - maxX; nMaxX = 1 - minX;
-                    nMinZ = 1 - maxZ; nMaxZ = 1 - minZ;
-                }
-                case COUNTERCLOCKWISE_90 -> {
-                    nMinX = minZ;     nMaxX = maxZ;
-                    nMinZ = 1 - maxX; nMaxZ = 1 - minX;
-                }
-                default -> {}
-            }
-
-            out[0] = Shapes.or(out[0], Shapes.box(nMinX, minY, nMinZ, nMaxX, maxY, nMaxZ));
-        });
-
-        return out[0];
-    }
+    // Very thin selection box (vanilla banners are non-solid)
+    private static final VoxelShape SHAPE = Block.box(7, 0, 7, 9, 16, 9);
 
     public BannerBlock(Properties props) {
         super(props);
-        this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(HALF, DoubleBlockHalf.LOWER));
+        this.registerDefaultState(this.stateDefinition.any().setValue(ROTATION, 0));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF);
+        builder.add(ROTATION);
     }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE;
     }
 
-    @Override
     @Nullable
-    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        BlockPos pos = ctx.getClickedPos();
-        Level level = ctx.getLevel();
-        if (pos.getY() >= level.getMaxBuildHeight() - 1) return null;
-        if (!level.getBlockState(pos.above()).canBeReplaced(ctx)) return null;
-
-        return this.defaultBlockState()
-                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
-                .setValue(HALF, DoubleBlockHalf.LOWER);
-    }
-
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (level.isClientSide) return;
-        level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        int rot = Mth.floor((double) ((180.0F + ctx.getRotation()) * 16.0F / 360.0F) + 0.5D) & 15;
+        return this.defaultBlockState().setValue(ROTATION, rot);
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
-            return super.canSurvive(state, level, pos);
-        }
-        BlockState below = level.getBlockState(pos.below());
-        return below.is(this)
-                && below.getValue(HALF) == DoubleBlockHalf.LOWER
-                && below.getValue(FACING) == state.getValue(FACING);
+        BlockPos belowPos = pos.below();
+        BlockState below = level.getBlockState(belowPos);
+        return below.isFaceSturdy(level, belowPos, Direction.UP);
     }
 
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (level.isClientSide) return;
         if (!state.canSurvive(level, pos)) {
-            level.destroyBlock(pos, false);
+            level.destroyBlock(pos, true);
         }
     }
-
-
-    @Override
-public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-    if (!level.isClientSide) {
-        DoubleBlockHalf half = state.getValue(HALF);
-        BlockPos otherPos = (half == DoubleBlockHalf.LOWER) ? pos.above() : pos.below();
-        BlockState other = level.getBlockState(otherPos);
-
-        // If the other half is ours, remove it too.
-        if (other.is(this) && other.getValue(HALF) != half) {
-
-            // Vanilla door behavior: breaking the UPPER half should still drop the item.
-            // Our loot table will only drop on the LOWER half, so we manually drop when the UPPER is mined.
-            if (half == DoubleBlockHalf.UPPER && !player.isCreative()) {
-                popResource(level, otherPos, new ItemStack(this.asItem()));
-            }
-
-            level.setBlock(otherPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 35);
-            level.levelEvent(player, 2001, otherPos, Block.getId(other));
-        }
-    }
-    super.playerWillDestroy(level, pos, state, player);
-}
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        Direction f = state.getValue(FACING);
-        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
-            return UPPER_SHAPES.getOrDefault(f, UPPER_SHAPES.get(Direction.NORTH));
-        }
-        return LOWER_SHAPES.getOrDefault(f, LOWER_SHAPES.get(Direction.NORTH));
+        return SHAPE;
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
-        return getShape(state, level, pos, ctx);
+        return Shapes.empty();
     }
 
     @Override
@@ -191,27 +99,47 @@ public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Playe
     @Nullable
     @Override
     public BannerBlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        // Only store data on LOWER half
-        return state.getValue(HALF) == DoubleBlockHalf.LOWER ? new BannerBlockEntity(pos, state) : null;
+        return new BannerBlockEntity(pos, state);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        // If clicked upper, redirect to lower
-        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
-            pos = pos.below();
-            state = level.getBlockState(pos);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (level.isClientSide) return;
+        if (level.getBlockEntity(pos) instanceof BannerBlockEntity be) {
+            be.readFromItem(stack);
+            be.setChanged();
+            ((ServerLevel) level).sendBlockUpdated(pos, state, state, 3);
         }
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
+        ItemStack out = new ItemStack(this.asItem());
+        if (level.getBlockEntity(pos) instanceof BannerBlockEntity be) {
+            be.writeToItem(out);
+        }
+        return out;
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit) {
 
         if (!(level.getBlockEntity(pos) instanceof BannerBlockEntity be)) return InteractionResult.PASS;
 
         ItemStack held = player.getItemInHand(hand);
         boolean holdingScroll = held.getItem() instanceof ScrollItem;
 
+        // Shift + empty hand toggles lock; holding scroll applies crest.
+        if (!holdingScroll && !(player.isShiftKeyDown() && held.isEmpty())) return InteractionResult.PASS;
+
         if (!level.isClientSide) {
             if (player.isShiftKeyDown() && held.isEmpty()) {
                 be.setLocked(!be.isLocked());
-                player.displayClientMessage(Component.translatable(be.isLocked() ? "message.craftheraldry.locked" : "message.craftheraldry.unlocked"), true);
+                player.displayClientMessage(
+                        Component.translatable(be.isLocked() ? "message.craftheraldry.locked" : "message.craftheraldry.unlocked"),
+                        true
+                );
                 be.setChanged();
                 ((ServerLevel) level).sendBlockUpdated(pos, state, state, 3);
                 return InteractionResult.CONSUME;
@@ -229,6 +157,7 @@ public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Playe
                 return InteractionResult.CONSUME;
             }
         }
+
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }
