@@ -62,7 +62,9 @@ public class BannerBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        int rot = Mth.floor((double) ((180.0F + ctx.getRotation()) * 16.0F / 360.0F) + 0.5D) & 15;
+        // Vanilla standing banner placement:
+        // ROTATION_16 is derived directly from the placing entity's yaw.
+        int rot = Mth.floor((double) (ctx.getRotation() * 16.0F / 360.0F) + 0.5D) & 15;
         return this.defaultBlockState().setValue(ROTATION, rot);
     }
 

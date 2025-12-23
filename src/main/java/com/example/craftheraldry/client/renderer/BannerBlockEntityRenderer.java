@@ -21,9 +21,10 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
     private static final ResourceLocation CLOTH_BASE =
             new ResourceLocation(CraftHeraldry.MODID, "textures/entity/banner_cloth.png");
 
-    // Same texture used for the standing banner rod/crossbar
+    // Use a simple wood texture for the banner rod/crossbar.
+    // (Oak planks reads closest to vanilla's banner bar in-game.)
     private static final ResourceLocation WOOD_ROD_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/oak_log.png");
+            new ResourceLocation("minecraft", "textures/block/oak_planks.png");
 
     private static final ResourceLocation SHEET0 =
             new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_0.png");
@@ -50,16 +51,14 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         ps.translate(0.5, 0.5, 0.5);
         if (isWallBanner) {
             Direction facing = state.getValue(WallBannerBlock.FACING);
-            float rotY = switch (facing) {
-                case SOUTH -> 180f;
-                case WEST -> 90f;
-                case EAST -> -90f;
-                default -> 0f;
-            };
-            ps.mulPose(Axis.YP.rotationDegrees(rotY));
+            // Rotate so the cloth plane faces outward in the direction of FACING.
+            // This matches vanilla-style block entity rotations and fixes N/S inversion.
+            ps.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
         } else {
             int rot = state.hasProperty(BannerBlock.ROTATION) ? state.getValue(BannerBlock.ROTATION) : 0;
-            ps.mulPose(Axis.YP.rotationDegrees(-(rot * 22.5f)));
+            // Vanilla standing banner: ROTATION_16 is applied with a negative sign in rendering.
+            // This ensures the banner's front faces the placer for all directions.
+            ps.mulPose(Axis.YP.rotationDegrees(-rot * 22.5f));
         }
         ps.translate(-0.5, -0.5, -0.5);
 
@@ -73,7 +72,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float y1 = 32f / 16f;
 
         // Standing banner is offset inward; wall banner is flush to wall (near z=1.0).
-        float z = isWallBanner ? (15.85f / 16f) : (6.5f / 16f);
+        float z = isWallBanner ? (1.0f / 16f) : (6.5f / 16f);
 
         // === Standing banner pole + crossbar ===
         if (!isWallBanner) {
@@ -105,64 +104,45 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
             box(rodVc, pose, normal, cx0, cy0, cz0, cx1, cy1, cz1, 0f, 0f, 1f, 1f, ov, light);
         }
 
-        // === Wall banner rod (simple box). Rendered here because the wall banner block uses RenderShape.INVISIBLE. ===
+        // === Wall banner bar + tips (vanilla-like). Rendered here because the wall banner block uses RenderShape.INVISIBLE. ===
         if (isWallBanner) {
             VertexConsumer rodVc = buf.getBuffer(RenderType.entitySolid(WOOD_ROD_TEXTURE));
             var pose = ps.last().pose();
             var normal = ps.last().normal();
             int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
 
-            float rodThicknessY = 2f / 16f; // 2px tall
-            float rodDepthZ     = 4f / 16f; // protrude 4px out
+            // The Mojang wall banner has a thin crossbar at the very top of the (2-block-tall) cloth,
+            // with little "tips" on each end.
+            float barH = 2f / 16f;   // 2px tall
+            float barD = 2f / 16f;   // 2px thick
 
-            float ry1 = y1;
-            float ry0 = y1 - rodThicknessY;
+            float by1 = y1;
+            float by0 = y1 - barH;
 
-            // Keep rod slightly in front of cloth (avoid z-fight)
-            float rzWall = 15.98f / 16f;
-            float rz0 = rzWall - rodDepthZ; // towards player
-            float rz1 = rzWall;             // towards wall
+            // Keep the bar just in front of the wall, with a tiny epsilon to avoid z-fighting.
+            float bz1 = 2.0f / 16f;        // near the wall
+            float bz0 = bz1 - barD;          // towards the player
 
-            float rx0 = x0 - (1f / 16f);
-            float rx1 = x1 + (1f / 16f);
+            // Main bar spans almost the full width.
+            float bx0 = 1f / 16f;
+            float bx1 = 15f / 16f;
+            box(rodVc, pose, normal, bx0, by0, bz0, bx1, by1, bz1, 0f, 0f, 1f, 1f, ov, light);
 
-            float ru0 = 0f, ru1 = 1f, rv0 = 0f, rv1 = 1f;
+            // End tips: small cubes that stick out 1px beyond each end.
+            float tip = 2f / 16f; // 2px wide
+            float tipOut = 1f / 16f;
 
-            // Front
-            rodVc.vertex(pose, rx0, ry1, rz0).color(1f,1f,1f,1f).uv(ru0,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
-            rodVc.vertex(pose, rx1, ry1, rz0).color(1f,1f,1f,1f).uv(ru1,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
-            rodVc.vertex(pose, rx1, ry0, rz0).color(1f,1f,1f,1f).uv(ru1,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
-            rodVc.vertex(pose, rx0, ry0, rz0).color(1f,1f,1f,1f).uv(ru0,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,0,-1).endVertex();
+            // Left tip
+            box(rodVc, pose, normal,
+                    bx0 - tipOut, by0, bz0,
+                    bx0 - tipOut + tip, by1, bz1,
+                    0f, 0f, 1f, 1f, ov, light);
 
-            // Back
-            rodVc.vertex(pose, rx1, ry1, rz1).color(1f,1f,1f,1f).uv(ru0,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
-            rodVc.vertex(pose, rx0, ry1, rz1).color(1f,1f,1f,1f).uv(ru1,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
-            rodVc.vertex(pose, rx0, ry0, rz1).color(1f,1f,1f,1f).uv(ru1,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
-            rodVc.vertex(pose, rx1, ry0, rz1).color(1f,1f,1f,1f).uv(ru0,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,0,1).endVertex();
-
-            // Top
-            rodVc.vertex(pose, rx0, ry1, rz1).color(1f,1f,1f,1f).uv(ru0,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
-            rodVc.vertex(pose, rx1, ry1, rz1).color(1f,1f,1f,1f).uv(ru1,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
-            rodVc.vertex(pose, rx1, ry1, rz0).color(1f,1f,1f,1f).uv(ru1,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
-            rodVc.vertex(pose, rx0, ry1, rz0).color(1f,1f,1f,1f).uv(ru0,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
-
-            // Bottom
-            rodVc.vertex(pose, rx0, ry0, rz0).color(1f,1f,1f,1f).uv(ru0,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
-            rodVc.vertex(pose, rx1, ry0, rz0).color(1f,1f,1f,1f).uv(ru1,rv0).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
-            rodVc.vertex(pose, rx1, ry0, rz1).color(1f,1f,1f,1f).uv(ru1,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
-            rodVc.vertex(pose, rx0, ry0, rz1).color(1f,1f,1f,1f).uv(ru0,rv1).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
-
-            // Left end
-            rodVc.vertex(pose, rx0, ry1, rz1).color(1f,1f,1f,1f).uv(ru0,rv0).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
-            rodVc.vertex(pose, rx0, ry1, rz0).color(1f,1f,1f,1f).uv(ru1,rv0).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
-            rodVc.vertex(pose, rx0, ry0, rz0).color(1f,1f,1f,1f).uv(ru1,rv1).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
-            rodVc.vertex(pose, rx0, ry0, rz1).color(1f,1f,1f,1f).uv(ru0,rv1).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
-
-            // Right end
-            rodVc.vertex(pose, rx1, ry1, rz0).color(1f,1f,1f,1f).uv(ru0,rv0).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
-            rodVc.vertex(pose, rx1, ry1, rz1).color(1f,1f,1f,1f).uv(ru1,rv0).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
-            rodVc.vertex(pose, rx1, ry0, rz1).color(1f,1f,1f,1f).uv(ru1,rv1).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
-            rodVc.vertex(pose, rx1, ry0, rz0).color(1f,1f,1f,1f).uv(ru0,rv1).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+            // Right tip
+            box(rodVc, pose, normal,
+                    bx1 - tip + tipOut, by0, bz0,
+                    bx1 + tipOut, by1, bz1,
+                    0f, 0f, 1f, 1f, ov, light);
         }
 
         CrestData crest = be.getCrest();
@@ -170,10 +150,16 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         // If NO crest is set yet: show the plain cloth.
         if (crest == null || crest.icon() < 0) {
             VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
-            // front
-            putInvertedVQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
-            // back (swap x to flip winding)
-            putInvertedVQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
+            if (isWallBanner) {
+                // Mojang/vanilla wall banner shape is a simple rectangle (no V-cut).
+                putQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                putQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
+            } else {
+                // Standing banner uses the inverted V-cut.
+                putInvertedVQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                // back (swap x to flip winding)
+                putInvertedVQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
+            }
             ps.popPose();
             return;
         }
@@ -188,17 +174,33 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float v1 = ((row + 1) * 64f) / 4096f;
 
         VertexConsumer vc0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
-        putInvertedVQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
+        if (isWallBanner) {
+            putQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
+        } else {
+            putInvertedVQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
+        }
 
         VertexConsumer vc1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
-        putInvertedVQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
+        if (isWallBanner) {
+            putQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
+        } else {
+            putInvertedVQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
+        }
 
         // back side (see crest from behind)
         VertexConsumer back0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
-        putInvertedVQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+        if (isWallBanner) {
+            putQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+        } else {
+            putInvertedVQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+        }
 
         VertexConsumer back1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
-        putInvertedVQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+        if (isWallBanner) {
+            putQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+        } else {
+            putInvertedVQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+        }
 
         ps.popPose();
     }
@@ -280,5 +282,28 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
         vc.vertex(pose, xCenter, yNotch, z).color(r, g, b, 1f).uv(uCenter, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
 
+    }
+
+    /**
+     * Simple rectangular quad (used for Mojang/vanilla wall banners).
+     * x0/x1 ordering controls winding and mirrors UVs for the back side.
+     */
+    private static void putQuad(PoseStack ps, VertexConsumer vc,
+                                float x0, float y0, float x1, float y1, float z,
+                                float u0, float v0, float u1, float v1,
+                                int color, int light) {
+
+        float r = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float b = (color & 0xFF) / 255f;
+
+        var pose = ps.last().pose();
+        var normal = ps.last().normal();
+        int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
+
+        vc.vertex(pose, x0, y1, z).color(r, g, b, 1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+        vc.vertex(pose, x1, y1, z).color(r, g, b, 1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+        vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
+        vc.vertex(pose, x0, y0, z).color(r, g, b, 1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
     }
 }

@@ -76,9 +76,21 @@ public class WallBannerBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        Direction face = ctx.getClickedFace();
-        if (!face.getAxis().isHorizontal()) return null;
-        return defaultBlockState().setValue(FACING, face);
+        // Vanilla wall banners try the nearest-looking horizontal direction(s) and
+        // attach to the block behind them. This makes placement feel identical to
+        // Mojang's wall banner.
+        for (Direction dir : ctx.getNearestLookingDirections()) {
+            if (!dir.getAxis().isHorizontal()) continue;
+
+            // Our FACING is the direction the banner faces *outward* (away from the wall).
+            // The support block is therefore behind it at FACING.getOpposite().
+            Direction facingOut = dir.getOpposite();
+            BlockState state = defaultBlockState().setValue(FACING, facingOut);
+            if (state.canSurvive(ctx.getLevel(), ctx.getClickedPos())) {
+                return state;
+            }
+        }
+        return null;
     }
 
     @Override
