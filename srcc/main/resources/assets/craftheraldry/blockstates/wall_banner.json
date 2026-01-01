@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "craftheraldry:block/empty" },
+    "facing=south": { "model": "craftheraldry:block/empty" },
+    "facing=west":  { "model": "craftheraldry:block/empty" },
+    "facing=east":  { "model": "craftheraldry:block/empty" }
+  }
+}

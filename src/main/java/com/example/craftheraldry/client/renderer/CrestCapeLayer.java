@@ -100,7 +100,7 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         // Walk bounce (damped)
         float amt = Mth.clamp(limbSwingAmount, 0.0F, 1.0F);
         amt *= amt;
-        f1 += Mth.sin(limbSwing * 6.0F) * WALK_AMP * amt;
+        f1 += Mth.sin(limbSwing * 1.0F) * WALK_AMP * amt;
 
         if (player.isCrouching()) {
             f1 += 25.0F;

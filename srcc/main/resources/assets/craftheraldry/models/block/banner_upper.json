@@ -1,0 +1,76 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "pole_side": "minecraft:block/oak_log",
+    "pole_end": "minecraft:block/oak_log_top",
+    "particle": "minecraft:block/oak_log"
+  },
+  "elements": [
+    {
+      "name": "pole_upper",
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pole_side"
+        },
+        "south": {
+          "texture": "#pole_side"
+        },
+        "east": {
+          "texture": "#pole_side"
+        },
+        "west": {
+          "texture": "#pole_side"
+        },
+        "up": {
+          "texture": "#pole_end"
+        },
+        "down": {
+          "texture": "#pole_end"
+        }
+      }
+    },
+    {
+      "name": "crossbar_upper",
+      "from": [
+        2,
+        14,
+        7
+      ],
+      "to": [
+        14,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pole_side"
+        },
+        "south": {
+          "texture": "#pole_side"
+        },
+        "up": {
+          "texture": "#pole_side"
+        },
+        "down": {
+          "texture": "#pole_side"
+        },
+        "east": {
+          "texture": "#pole_end"
+        },
+        "west": {
+          "texture": "#pole_end"
+        }
+      }
+    }
+  ]
+}
