@@ -1,6 +1,9 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [" P ","PIP"," P "],
+  "pattern": [
+    " P ",
+    "PIP",
+    " P "],
   "key": { "P": { "item": "minecraft:paper" }, "I": { "item": "minecraft:ink_sac" } },
   "result": { "item": "craftheraldry:scroll", "count": 1 }
 }
