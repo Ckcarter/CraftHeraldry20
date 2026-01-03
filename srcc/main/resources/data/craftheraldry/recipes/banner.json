@@ -1,6 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "pattern": ["WWW","WWW"," S "],
-  "key": { "W": { "tag": "minecraft:wool" }, "S": { "item": "minecraft:stick" } },
-  "result": { "item": "craftheraldry:banner", "count": 1 }
-}
