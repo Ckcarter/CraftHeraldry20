@@ -109,10 +109,10 @@ private int icon = -1;
 
         Layout l = layout();
 
-        gg.drawCenteredString(this.font, Component.translatable("Heraldry Crest Editor"), l.cx, l.top, 0xFFFFFF);
+        gg.drawCenteredString(this.font, Component.translatable("screen.craftheraldry.editor"), l.cx, l.top, 0xFFFFFF);
 
-        gg.drawString(this.font, Component.translatable("Background Color"), l.cx - 110, l.colorY - 10, 0xFFFFFF);
-        gg.drawString(this.font, Component.translatable("Crest Color"), l.cx + 20,  l.colorY - 10, 0xFFFFFF);
+        gg.drawString(this.font, Component.translatable("screen.craftheraldry.color1"), l.cx - 110, l.colorY - 12, 0xFFFFFF);
+        gg.drawString(this.font, Component.translatable("screen.craftheraldry.color2"), l.cx + 20,  l.colorY - 12, 0xFFFFFF);
 
         gg.drawString(this.font, Component.translatable("screen.craftheraldry.page").append(": " + (page + 1)), l.cx + 45, l.buttonsY + 6, 0xFFFFFF);
 

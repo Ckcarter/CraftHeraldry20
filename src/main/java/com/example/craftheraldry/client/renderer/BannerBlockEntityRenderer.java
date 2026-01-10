@@ -34,10 +34,6 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
 
     private static final float NOTCH_HEIGHT = 2f / 16f;
 
-    // Vanilla banner cloth is effectively 1px thick.
-    private static final float CLOTH_THICKNESS = 1f / 16f;
-    private static final float Z_EPS = 0.0008f;
-
     public BannerBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {}
 
     @Override
@@ -77,10 +73,6 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
 
         // Standing banner is offset inward; wall banner is flush to wall (near z=1.0).
         float z = isWallBanner ? (1.0f / 16f) : (6.5f / 16f);
-
-        // Cloth has Mojang-like 1px thickness; render crest on the true front/back faces.
-        float zFront = z + (CLOTH_THICKNESS * 0.5f);
-        float zBack  = z - (CLOTH_THICKNESS * 0.5f);
 
         // === Standing banner pole + crossbar ===
         if (!isWallBanner) {
@@ -160,24 +152,19 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
             VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
             if (isWallBanner) {
                 // Mojang/vanilla wall banner shape is a simple rectangle (no V-cut).
-                putThickRect(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                putQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                putQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
             } else {
                 // Standing banner uses the inverted V-cut.
-                putThickInvertedV(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                putInvertedVQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                // back (swap x to flip winding)
+                putInvertedVQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
             }
             ps.popPose();
             return;
         }
 
         // Crest is set: render crest layers.
-        // First render the cloth base behind the crest so transparent pixels read correctly.
-        VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
-        if (isWallBanner) {
-            putThickRect(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
-        } else {
-            putThickInvertedV(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
-        }
-
         int icon = crest.icon();
         int col = icon % 32;
         int row = icon / 32;
@@ -188,31 +175,31 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
 
         VertexConsumer vc0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
         if (isWallBanner) {
-            putQuad(ps, vc0, x0, y0, x1, y1, zFront + Z_EPS, u0, v0, u1, v1, crest.color1(), light);
+            putQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
         } else {
-            putInvertedVQuad(ps, vc0, x0, y0, x1, y1, zFront + Z_EPS, u0, v0, u1, v1, crest.color1(), light);
+            putInvertedVQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
         }
 
         VertexConsumer vc1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
         if (isWallBanner) {
-            putQuad(ps, vc1, x0, y0, x1, y1, zFront + (Z_EPS * 2f), u0, v0, u1, v1, crest.color2(), light);
+            putQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
         } else {
-            putInvertedVQuad(ps, vc1, x0, y0, x1, y1, zFront + (Z_EPS * 2f), u0, v0, u1, v1, crest.color2(), light);
+            putInvertedVQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
         }
 
         // back side (see crest from behind)
         VertexConsumer back0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
         if (isWallBanner) {
-            putQuad(ps, back0, x1, y0, x0, y1, zBack - Z_EPS, u0, v0, u1, v1, crest.color1(), light);
+            putQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
         } else {
-            putInvertedVQuad(ps, back0, x1, y0, x0, y1, zBack - Z_EPS, u0, v0, u1, v1, crest.color1(), light);
+            putInvertedVQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
         }
 
         VertexConsumer back1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
         if (isWallBanner) {
-            putQuad(ps, back1, x1, y0, x0, y1, zBack - (Z_EPS * 2f), u0, v0, u1, v1, crest.color2(), light);
+            putQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
         } else {
-            putInvertedVQuad(ps, back1, x1, y0, x0, y1, zBack - (Z_EPS * 2f), u0, v0, u1, v1, crest.color2(), light);
+            putInvertedVQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
         }
 
         ps.popPose();
@@ -319,70 +306,4 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         vc.vertex(pose, x1, y0, z).color(r, g, b, 1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
         vc.vertex(pose, x0, y0, z).color(r, g, b, 1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
     }
-
-    private static void putEdgeQuad(PoseStack ps, VertexConsumer vc,
-                                    float xA, float yA, float xB, float yB,
-                                    float zBack, float zFront,
-                                    int color, int light) {
-        float r = ((color >> 16) & 0xFF) / 255f;
-        float g = ((color >> 8) & 0xFF) / 255f;
-        float b = (color & 0xFF) / 255f;
-
-        var pose = ps.last().pose();
-        var normal = ps.last().normal();
-        int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
-
-        // Simple UVs for edge strips; edges are barely visible at 1px thickness.
-        vc.vertex(pose, xA, yA, zFront).color(r, g, b, 1f).uv(0f, 0f).overlayCoords(ov).uv2(light).normal(normal, 0, 0, 1).endVertex();
-        vc.vertex(pose, xB, yB, zFront).color(r, g, b, 1f).uv(1f, 0f).overlayCoords(ov).uv2(light).normal(normal, 0, 0, 1).endVertex();
-        vc.vertex(pose, xB, yB, zBack).color(r, g, b, 1f).uv(1f, 1f).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-        vc.vertex(pose, xA, yA, zBack).color(r, g, b, 1f).uv(0f, 1f).overlayCoords(ov).uv2(light).normal(normal, 0, 0, -1).endVertex();
-    }
-
-    private static void putThickRect(PoseStack ps, VertexConsumer vc,
-                                     float x0, float y0, float x1, float y1,
-                                     float zCenter,
-                                     float u0, float v0, float u1, float v1,
-                                     int color, int light) {
-
-        float zFront = zCenter + (CLOTH_THICKNESS * 0.5f);
-        float zBack  = zCenter - (CLOTH_THICKNESS * 0.5f);
-
-        // Front + back faces
-        putQuad(ps, vc, x0, y0, x1, y1, zFront + Z_EPS, u0, v0, u1, v1, color, light);
-        putQuad(ps, vc, x1, y0, x0, y1, zBack - Z_EPS, u1, v0, u0, v1, color, light);
-
-        // Perimeter edges
-        putEdgeQuad(ps, vc, x0, y0, x0, y1, zBack, zFront, color, light); // left
-        putEdgeQuad(ps, vc, x1, y1, x1, y0, zBack, zFront, color, light); // right
-        putEdgeQuad(ps, vc, x0, y1, x1, y1, zBack, zFront, color, light); // top
-        putEdgeQuad(ps, vc, x1, y0, x0, y0, zBack, zFront, color, light); // bottom
-    }
-
-    private static void putThickInvertedV(PoseStack ps, VertexConsumer vc,
-                                          float x0, float y0, float x1, float y1,
-                                          float zCenter,
-                                          float u0, float v0, float u1, float v1,
-                                          int color, int light) {
-
-        float zFront = zCenter + (CLOTH_THICKNESS * 0.5f);
-        float zBack  = zCenter - (CLOTH_THICKNESS * 0.5f);
-
-        // Front + back faces (inverted V on both)
-        putInvertedVQuad(ps, vc, x0, y0, x1, y1, zFront + Z_EPS, u0, v0, u1, v1, color, light);
-        putInvertedVQuad(ps, vc, x1, y0, x0, y1, zBack - Z_EPS, u1, v0, u0, v1, color, light);
-
-        // Edges: left/right/top + the two diagonal "V" edges.
-        float xCenter = (x0 + x1) * 0.5f;
-        float yNotch = y0 + NOTCH_HEIGHT;
-
-        putEdgeQuad(ps, vc, x0, y0, x0, y1, zBack, zFront, color, light); // left
-        putEdgeQuad(ps, vc, x1, y1, x1, y0, zBack, zFront, color, light); // right
-        putEdgeQuad(ps, vc, x0, y1, x1, y1, zBack, zFront, color, light); // top
-
-        // Diagonal edges for the notch
-        putEdgeQuad(ps, vc, x0, y0, xCenter, yNotch, zBack, zFront, color, light);
-        putEdgeQuad(ps, vc, xCenter, yNotch, x1, y0, zBack, zFront, color, light);
-    }
-
 }

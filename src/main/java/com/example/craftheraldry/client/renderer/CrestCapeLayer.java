@@ -74,8 +74,9 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         if (capeTex == null) return;
 
         ps.pushPose();
-        // Match vanilla Elytra spacing (~2px)
-        ps.translate(0.0F, 0.0F, 4.25F / 16.0F);
+        // Vanilla cape spacing: cape is rendered in model space, then nudged back by 0.125.
+        // This is the same offset Mojang uses so it sits correctly relative to armor.
+        ps.translate(0.0D, 0.0D, 0.125D);
 
         double d0 = Mth.lerp(partialTicks, player.xCloakO, player.xCloak) - Mth.lerp(partialTicks, player.xo, player.getX());
         double d1 = Mth.lerp(partialTicks, player.yCloakO, player.yCloak) - Mth.lerp(partialTicks, player.yo, player.getY());
@@ -104,7 +105,8 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
 
         if (player.isCrouching()) {
             f1 += 25.0F;
-            ps.translate(0.0F, 0.125F, 0.0F);
+            // Vanilla crouch compensation
+            ps.translate(0.0D, 0.2D, 0.0D);
         }
 
         // --- smoothing (per player) ---
@@ -119,11 +121,12 @@ public class CrestCapeLayer extends RenderLayer<AbstractClientPlayer, PlayerMode
         }
         s.lastAge = ageInTicks;
 
-        // Apply smoothed rotations. No extra Y-rotation; renderCloak orients the geometry.
+        // Apply rotations in the same order as vanilla CapeLayer (X, Z, then Y).
         ps.mulPose(Axis.XP.rotationDegrees(6.0F + f2 / 2.0F + s.pitch));
         ps.mulPose(Axis.ZP.rotationDegrees(s.roll / 2.0F));
+        ps.mulPose(Axis.YP.rotationDegrees(180.0F - (s.roll / 2.0F)));
 
-        VertexConsumer vc = buf.getBuffer(RenderType.entityTranslucent(capeTex));
+        VertexConsumer vc = buf.getBuffer(RenderType.entitySolid(capeTex));
         this.getParentModel().renderCloak(ps, vc, light, OverlayTexture.NO_OVERLAY);
 
         ps.popPose();
