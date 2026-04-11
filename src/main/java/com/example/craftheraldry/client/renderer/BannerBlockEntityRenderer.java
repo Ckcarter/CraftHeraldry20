@@ -95,10 +95,10 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
             float py1 = 32f / 16f;
 
             // Crossbar (14px wide, 2px tall, 2px thick) at the top
-            float cx0 = 2f / 16f;
-            float cx1 = 14f / 16f;
-            float cy0 = (32f / 16f) - (2f / 16f);
-            float cy1 = 32f / 16f;
+            float cx0 = 1f / 16f;
+            float cx1 = 15f / 16f;
+            float cy0 = ((32f / 16f) - (2f / 16f)) + (2f / 16f);
+            float cy1 = (32f / 16f) + (2f / 16f);
             float cz0 = 7f / 16f;
             float cz1 = 9f / 16f;
 
