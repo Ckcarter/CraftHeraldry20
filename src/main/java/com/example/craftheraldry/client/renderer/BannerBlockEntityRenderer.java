@@ -67,7 +67,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
 
         // Wall banner cloth is 2 blocks tall and hangs down from the top block.
         // Lower the wall banner by an additional 3 pixels (3/16 = 0.1875).
-        if (isWallBanner) ps.translate(0.0, -1.0, 0.0);
+        if (isWallBanner) ps.translate(0.0, -1.0999, 0.0);
 
         // Cloth quad bounds
         float x0 = 1f / 16f, x1 = 15f / 16f;
@@ -122,7 +122,7 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
             float barD = 2f / 16f;   // 2px thick
 
             // Lower only the wall bar/tips by 3 pixels so the cloth stays put.
-            float barYOffset = -2f / 16f;
+            float barYOffset = -1.9f / 19f;
             float by1 = y1 - barYOffset;
             float by0 = by1 - barH;
 
