@@ -1,5 +1,6 @@
 {
   "item.craftheraldry.scroll": "Heraldry Scroll",
+  "itemGroup.craftheraldry.main": "Craft Heraldry",
   "block.craftheraldry.banner": "Heraldry Banner",
   "block.craftheraldry.wall_banner": "Heraldry Wall Banner",
   "message.craftheraldry.locked": "Banner Locked.",

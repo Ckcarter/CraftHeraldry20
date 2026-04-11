@@ -32,6 +32,9 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
             new ResourceLocation(CraftHeraldry.MODID, "textures/icons/icon_sheet_1.png");
 
 
+    /** Vanilla banner cloth thickness: 1px (1/16 of a block). */
+    private static final float CLOTH_THICKNESS = 1.0F / 16.0F;
+
     private static final float NOTCH_HEIGHT = 2f / 16f;
 
     public BannerBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {}
@@ -72,7 +75,8 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float y1 = 32f / 16f;
 
         // Standing banner is offset inward; wall banner is flush to wall (near z=1.0).
-        float z = isWallBanner ? (1.0f / 16f) : (6.5f / 16f);
+        float zFront = isWallBanner ? (1.0f / 16f) : (6.5f / 16f);
+        float zBack = zFront + CLOTH_THICKNESS;
 
         // === Standing banner pole + crossbar ===
         if (!isWallBanner) {
@@ -147,19 +151,18 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
 
         CrestData crest = be.getCrest();
 
+        // === Cloth body (now rendered as a thin prism, vanilla-like thickness) ===
+        VertexConsumer cloth = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
+        if (isWallBanner) {
+            putRectPrism(ps, cloth, x0, y0, x1, y1, zFront, zBack,
+                    0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+        } else {
+            putInvertedVPrism(ps, cloth, x0, y0, x1, y1, zFront, zBack,
+                    0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+        }
+
         // If NO crest is set yet: show the plain cloth.
         if (crest == null || crest.icon() < 0) {
-            VertexConsumer base = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
-            if (isWallBanner) {
-                // Mojang/vanilla wall banner shape is a simple rectangle (no V-cut).
-                putQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
-                putQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
-            } else {
-                // Standing banner uses the inverted V-cut.
-                putInvertedVQuad(ps, base, x0, y0, x1, y1, z, 0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
-                // back (swap x to flip winding)
-                putInvertedVQuad(ps, base, x1, y0, x0, y1, z + 0.0010f, 1f, 0f, 0f, 1f, 0xFFFFFFFF, light);
-            }
             ps.popPose();
             return;
         }
@@ -173,33 +176,40 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         float u1 = ((col + 1) * 64f) / 2048f;
         float v1 = ((row + 1) * 64f) / 4096f;
 
+        // Crest layers render as decals on the front/back faces only.
+        // (Edges stay plain cloth, matching vanilla banner behavior.)
+        float zFrontDecal0 = zFront - 0.0008f;
+        float zFrontDecal1 = zFront - 0.0016f;
+        float zBackDecal0 = zBack + 0.0008f;
+        float zBackDecal1 = zBack + 0.0016f;
+
         VertexConsumer vc0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
         if (isWallBanner) {
-            putQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
+            putQuad(ps, vc0, x0, y0, x1, y1, zFrontDecal0, u1, v0, u0, v1, crest.color1(), light);
         } else {
-            putInvertedVQuad(ps, vc0, x0, y0, x1, y1, z + 0.0008f, u1, v0, u0, v1, crest.color1(), light);
+            putInvertedVQuad(ps, vc0, x0, y0, x1, y1, zFrontDecal0, u1, v0, u0, v1, crest.color1(), light);
         }
 
         VertexConsumer vc1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
         if (isWallBanner) {
-            putQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
+            putQuad(ps, vc1, x0, y0, x1, y1, zFrontDecal1, u1, v0, u0, v1, crest.color2(), light);
         } else {
-            putInvertedVQuad(ps, vc1, x0, y0, x1, y1, z + 0.0016f, u1, v0, u0, v1, crest.color2(), light);
+            putInvertedVQuad(ps, vc1, x0, y0, x1, y1, zFrontDecal1, u1, v0, u0, v1, crest.color2(), light);
         }
 
         // back side (see crest from behind)
         VertexConsumer back0 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET0));
         if (isWallBanner) {
-            putQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+            putQuad(ps, back0, x1, y0, x0, y1, zBackDecal0, u1, v0, u0, v1, crest.color1(), light);
         } else {
-            putInvertedVQuad(ps, back0, x1, y0, x0, y1, z + 0.0025f, u1, v0, u0, v1, crest.color1(), light);
+            putInvertedVQuad(ps, back0, x1, y0, x0, y1, zBackDecal0, u1, v0, u0, v1, crest.color1(), light);
         }
 
         VertexConsumer back1 = buf.getBuffer(RenderType.entityCutoutNoCull(SHEET1));
         if (isWallBanner) {
-            putQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+            putQuad(ps, back1, x1, y0, x0, y1, zBackDecal1, u1, v0, u0, v1, crest.color2(), light);
         } else {
-            putInvertedVQuad(ps, back1, x1, y0, x0, y1, z + 0.0033f, u1, v0, u0, v1, crest.color2(), light);
+            putInvertedVQuad(ps, back1, x1, y0, x0, y1, zBackDecal1, u1, v0, u0, v1, crest.color2(), light);
         }
 
         ps.popPose();
@@ -249,6 +259,169 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         vc.vertex(pose, x1, y0, z0).color(1f,1f,1f,1f).uv(u1,v0).overlayCoords(overlay).uv2(light).normal(normal, 0,-1,0).endVertex();
         vc.vertex(pose, x1, y0, z1).color(1f,1f,1f,1f).uv(u1,v1).overlayCoords(overlay).uv2(light).normal(normal, 0,-1,0).endVertex();
         vc.vertex(pose, x0, y0, z1).color(1f,1f,1f,1f).uv(u0,v1).overlayCoords(overlay).uv2(light).normal(normal, 0,-1,0).endVertex();
+    }
+
+    /**
+     * Render a thin, vanilla-like rectangular cloth prism (front/back + edges).
+     * Used for Mojang-style wall banners.
+     */
+    private static void putRectPrism(PoseStack ps, VertexConsumer vc,
+                                    float x0, float y0, float x1, float y1,
+                                    float zFront, float zBack,
+                                    float u0, float v0, float u1, float v1,
+                                    int color, int light) {
+
+        // Front/back faces
+        putQuad(ps, vc, x0, y0, x1, y1, zFront, u0, v0, u1, v1, color, light);
+        // Back face: swap X and U to mirror (same behavior as existing "back" quads)
+        putQuad(ps, vc, x1, y0, x0, y1, zBack, u1, v0, u0, v1, color, light);
+
+        float r = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float b = (color & 0xFF) / 255f;
+
+        var pose = ps.last().pose();
+        var normal = ps.last().normal();
+        int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
+
+        // Small UV slice for edges (avoids zero-width UVs on some GPUs)
+        float du = (u1 - u0) / 64f;
+        float dv = (v1 - v0) / 64f;
+
+        // Left (-X)
+        vc.vertex(pose, x0, y1, zBack).color(r,g,b,1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        vc.vertex(pose, x0, y1, zFront).color(r,g,b,1f).uv(u0+du, v0).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        vc.vertex(pose, x0, y0, zFront).color(r,g,b,1f).uv(u0+du, v1).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        vc.vertex(pose, x0, y0, zBack).color(r,g,b,1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+
+        // Right (+X)
+        vc.vertex(pose, x1, y1, zFront).color(r,g,b,1f).uv(u1-du, v0).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        vc.vertex(pose, x1, y1, zBack).color(r,g,b,1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        vc.vertex(pose, x1, y0, zBack).color(r,g,b,1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        vc.vertex(pose, x1, y0, zFront).color(r,g,b,1f).uv(u1-du, v1).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+
+        // Top (+Y)
+        vc.vertex(pose, x0, y1, zBack).color(r,g,b,1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        vc.vertex(pose, x1, y1, zBack).color(r,g,b,1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        vc.vertex(pose, x1, y1, zFront).color(r,g,b,1f).uv(u1, v0+dv).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        vc.vertex(pose, x0, y1, zFront).color(r,g,b,1f).uv(u0, v0+dv).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+
+        // Bottom (-Y)
+        vc.vertex(pose, x0, y0, zFront).color(r,g,b,1f).uv(u0, v1-dv).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        vc.vertex(pose, x1, y0, zFront).color(r,g,b,1f).uv(u1, v1-dv).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        vc.vertex(pose, x1, y0, zBack).color(r,g,b,1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+        vc.vertex(pose, x0, y0, zBack).color(r,g,b,1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, 0,-1,0).endVertex();
+    }
+
+    /**
+     * Render a thin, vanilla-like inverted-V cloth prism (front/back + edges).
+     * Used for standing banners.
+     */
+    private static void putInvertedVPrism(PoseStack ps, VertexConsumer vc,
+                                         float x0, float y0, float x1, float y1,
+                                         float zFront, float zBack,
+                                         float u0, float v0, float u1, float v1,
+                                         int color, int light) {
+
+        // Front/back faces
+        putInvertedVQuad(ps, vc, x0, y0, x1, y1, zFront, u0, v0, u1, v1, color, light);
+        // Back face: mirror by swapping X and U
+        putInvertedVQuad(ps, vc, x1, y0, x0, y1, zBack, u1, v0, u0, v1, color, light);
+
+        float r = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float b = (color & 0xFF) / 255f;
+
+        var pose = ps.last().pose();
+        var normal = ps.last().normal();
+        int ov = net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY;
+
+        float xCenter = (x0 + x1) / 2f;
+        float yNotch = y0 + NOTCH_HEIGHT;
+
+        // Compute a reasonable v for the notch height (keeps edge mapping consistent-ish).
+        float tNotch = (yNotch - y0) / (y1 - y0);
+        float vNotch = v1 - (v1 - v0) * tNotch;
+
+        // Small UV slice for edges
+        float du = (u1 - u0) / 64f;
+
+        // Left vertical edge (-X)
+        vc.vertex(pose, x0, y1, zBack).color(r,g,b,1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        vc.vertex(pose, x0, y1, zFront).color(r,g,b,1f).uv(u0+du, v0).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        vc.vertex(pose, x0, y0, zFront).color(r,g,b,1f).uv(u0+du, v1).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+        vc.vertex(pose, x0, y0, zBack).color(r,g,b,1f).uv(u0, v1).overlayCoords(ov).uv2(light).normal(normal, -1,0,0).endVertex();
+
+        // Right vertical edge (+X)
+        vc.vertex(pose, x1, y1, zFront).color(r,g,b,1f).uv(u1-du, v0).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        vc.vertex(pose, x1, y1, zBack).color(r,g,b,1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        vc.vertex(pose, x1, y0, zBack).color(r,g,b,1f).uv(u1, v1).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+        vc.vertex(pose, x1, y0, zFront).color(r,g,b,1f).uv(u1-du, v1).overlayCoords(ov).uv2(light).normal(normal, 1,0,0).endVertex();
+
+        // Top edge (+Y)
+        vc.vertex(pose, x0, y1, zBack).color(r,g,b,1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        vc.vertex(pose, x1, y1, zBack).color(r,g,b,1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        vc.vertex(pose, x1, y1, zFront).color(r,g,b,1f).uv(u1, v0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+        vc.vertex(pose, x0, y1, zFront).color(r,g,b,1f).uv(u0, v0).overlayCoords(ov).uv2(light).normal(normal, 0,1,0).endVertex();
+
+        // Bottom slanted edge: (x0,y0) -> (xCenter,yNotch)
+        emitSlantedEdge(ps, vc,
+                x0, y0, u0, v1,
+                xCenter, yNotch, (u0 + u1) / 2f, vNotch,
+                zFront, zBack,
+                r, g, b, ov, light,
+                true);
+
+        // Bottom slanted edge: (xCenter,yNotch) -> (x1,y0)
+        emitSlantedEdge(ps, vc,
+                xCenter, yNotch, (u0 + u1) / 2f, vNotch,
+                x1, y0, u1, v1,
+                zFront, zBack,
+                r, g, b, ov, light,
+                false);
+    }
+
+    /** Emit a quad for a slanted bottom edge, computing an outward normal from the edge direction. */
+    private static void emitSlantedEdge(PoseStack ps, VertexConsumer vc,
+                                        float ax, float ay, float au, float av,
+                                        float bx, float by, float bu, float bv,
+                                        float zFront, float zBack,
+                                        float r, float g, float b,
+                                        int overlay, int light,
+                                        boolean leftEdge) {
+
+        var pose = ps.last().pose();
+        var normal = ps.last().normal();
+
+        float dx = bx - ax;
+        float dy = by - ay;
+        // Normal in the XY plane for an edge extruded along +Z.
+        float nx = dy;
+        float ny = -dx;
+        float len = (float) Math.sqrt(nx * nx + ny * ny);
+        if (len < 1.0e-6f) {
+            nx = 0;
+            ny = -1;
+            len = 1;
+        }
+        nx /= len;
+        ny /= len;
+
+        // For consistency, ensure left/right edges point "out" from the cloth.
+        // (This only affects lighting on the edge; geometry is identical.)
+        if (leftEdge) {
+            // leave as-is
+        } else {
+            // flip for the other slant
+            nx = -nx;
+            ny = -ny;
+        }
+
+        // Quad winding
+        vc.vertex(pose, ax, ay, zFront).color(r,g,b,1f).uv(au, av).overlayCoords(overlay).uv2(light).normal(normal, nx, ny, 0).endVertex();
+        vc.vertex(pose, bx, by, zFront).color(r,g,b,1f).uv(bu, bv).overlayCoords(overlay).uv2(light).normal(normal, nx, ny, 0).endVertex();
+        vc.vertex(pose, bx, by, zBack).color(r,g,b,1f).uv(bu, bv).overlayCoords(overlay).uv2(light).normal(normal, nx, ny, 0).endVertex();
+        vc.vertex(pose, ax, ay, zBack).color(r,g,b,1f).uv(au, av).overlayCoords(overlay).uv2(light).normal(normal, nx, ny, 0).endVertex();
     }
 
     private static void putInvertedVQuad(PoseStack ps, VertexConsumer vc,
