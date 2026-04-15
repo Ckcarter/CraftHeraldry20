@@ -153,15 +153,17 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
         }
 
         CrestData crest = be.getCrest();
+        int clothColor = resolveClothColor(crest);
 
         // === Cloth body (now rendered as a thin prism, vanilla-like thickness) ===
+        // Use the crest's primary color as the banner field/background.
         VertexConsumer cloth = buf.getBuffer(RenderType.entityCutoutNoCull(CLOTH_BASE));
         if (isWallBanner) {
             putRectPrism(ps, cloth, x0, y0, x1, y1, zFront, zBack,
-                    0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                    0f, 0f, 1f, 1f, clothColor, light);
         } else {
             putInvertedVPrism(ps, cloth, x0, y0, x1, y1, zFront, zBack,
-                    0f, 0f, 1f, 1f, 0xFFFFFFFF, light);
+                    0f, 0f, 1f, 1f, clothColor, light);
         }
 
         // If NO crest is set yet: show the plain cloth.
@@ -382,6 +384,13 @@ public class BannerBlockEntityRenderer implements BlockEntityRenderer<BannerBloc
                 zFront, zBack,
                 r, g, b, ov, light,
                 false);
+    }
+
+    private static int resolveClothColor(CrestData crest) {
+        if (crest == null) {
+            return 0xFFFFFF;
+        }
+        return crest.color1() & 0xFFFFFF;
     }
 
     /** Emit a quad for a slanted bottom edge, computing an outward normal from the edge direction. */
